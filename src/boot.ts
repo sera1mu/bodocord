@@ -51,3 +51,5 @@ const boot = async function bootBot() {
   // Connect gateway
   client.connect(BC_TOKEN, Intents.None);
 };
+
+await boot();
