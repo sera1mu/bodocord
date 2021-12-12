@@ -2,7 +2,7 @@ import { Client, ClientOptions, event } from "harmony";
 
 import { Logger } from "std/log";
 
-export class BodocordClient extends Client {
+export default class BodocordClient extends Client {
   logger: Logger;
 
   constructor(logger: Logger, options?: ClientOptions) {
