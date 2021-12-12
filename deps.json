@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "harmony": "https://deno.land/x/harmony@v2.3.0/mod.ts",
+    "std/log": "https://deno.land/std@0.117.0/log/mod.ts"
+  }
+}
