@@ -1,12 +1,6 @@
-import {
-  Client,
-  ClientOptions,
-  event
-} from 'harmony';
+import { Client, ClientOptions, event } from "harmony";
 
-import {
-  Logger
-} from 'std/log';
+import { Logger } from "std/log";
 
 export class BodocordClient extends Client {
   logger: Logger;
@@ -18,7 +12,7 @@ export class BodocordClient extends Client {
   }
 
   @event()
-  ready() : void{
+  ready(): void {
     this.logger.info(`Ready! Logged in as ${this.user?.tag}(${this.user?.id})`);
   }
 }
