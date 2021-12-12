@@ -13,6 +13,8 @@ export const getConfig = async function getConfigFromScript(
   filePath: string,
 ): Promise<Config> {
   const config = await import(filePath);
+  // Re-parse because imported config includes `[object]`
+  const parsedConfig = JSON.parse(JSON.stringify(config));
 
-  return config;
+  return parsedConfig;
 };
