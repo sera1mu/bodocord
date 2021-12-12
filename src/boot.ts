@@ -31,11 +31,11 @@ const getEnv = function getNecessaryEnvironmentVariables(): EnvironmentVariables
 }
 
 const boot = async function bootBot() {
-  // Get token
+  // Get env
   const { BC_CONFIG, BC_TOKEN } = getEnv();
 
   // Get config
-  const config = getConfig(BC_CONFIG);
+  const config = await getConfig(BC_CONFIG);
 
   // Setup config
   await log.setup(config.logConfig);
