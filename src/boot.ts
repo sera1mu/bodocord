@@ -40,7 +40,7 @@ const boot = async function bootBot() {
   const { BC_CONFIG, BC_TOKEN } = getEnv();
 
   // Get config
-  const config = await getConfig(BC_CONFIG);
+  const config = getConfig(BC_CONFIG);
 
   // Create logger
   const logger = pino(config.loggers['system']);
@@ -50,6 +50,24 @@ const boot = async function bootBot() {
 
   // Connect gateway
   await client.connect(BC_TOKEN, Intents.None);
+
+  return { logger };
 };
 
-await boot();
+// Measure boot time
+performance.mark("bootStart");
+const { logger } = await boot();
+performance.mark("bootEnd");
+
+performance.measure(
+  "boot",
+  "bootStart",
+  "bootEnd"
+);
+
+const bootTimeResult = performance.getEntriesByName("boot")[0]
+const divisionMiliSeconds = 1000;
+
+logger.info(`Done(${bootTimeResult.duration / divisionMiliSeconds} s)!`);
+logger.debug(bootTimeResult, "Boot measure result");
+
