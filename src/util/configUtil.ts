@@ -1,6 +1,13 @@
 import { DestinationStream, LoggerOptions } from "pino";
 
-type Logger = "system" | "client";
+/**
+ * Logger name
+ */
+export type Logger = "system" | "client";
+
+/**
+ * Configuration file
+ */
 export interface Config {
   loggers: {
     [key in Logger]: LoggerOptions | DestinationStream | undefined;
