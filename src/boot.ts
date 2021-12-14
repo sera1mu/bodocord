@@ -48,26 +48,26 @@ const getEnv =
 
 /**
  * Shutdown bot gracefully
- * @param client
- * @param logger
+ * @param client Bot client
+ * @param systemLogger
  */
 const shutdown = async function gracefullyShutdownBot(
   client: BodocordClient,
-  logger: pino.Logger,
+  systemLogger: pino.Logger,
 ): Promise<void> {
-  logger.info("Shutting down...");
+  systemLogger.info("Shutting down...");
 
   try {
     // Destroy client
     await client.destroy();
-    logger.info("Destroyed client.");
+    systemLogger.info("Destroyed client.");
   } catch (err) {
-    logger.error(err, "Failed to destroy client gracefully.");
-    logger.info("Exit code is 1.");
+    systemLogger.error(err, "Failed to destroy client gracefully.");
+    systemLogger.info("Exit code is 1.");
     Deno.exit(1);
   }
 
-  logger.info("Exit code is 0.");
+  systemLogger.info("Exit code is 0.");
 };
 
 /**
