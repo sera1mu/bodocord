@@ -1,14 +1,16 @@
 import { Client, ClientOptions, event } from "harmony";
-
-import { Logger } from "std/log";
+import { DestinationStream, LoggerOptions, pino } from "pino";
 
 export default class BodocordClient extends Client {
-  logger: Logger;
+  private logger: pino.Logger;
 
-  constructor(logger: Logger, options?: ClientOptions) {
+  constructor(
+    loggerOptionsOrStream?: LoggerOptions | DestinationStream,
+    options?: ClientOptions,
+  ) {
     super(options);
 
-    this.logger = logger;
+    this.logger = pino(loggerOptionsOrStream);
   }
 
   @event()
