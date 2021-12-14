@@ -1,6 +1,6 @@
 import * as log from "std/log";
 import { Intents } from "harmony";
-import { BodocordClient } from "./structures/BodocordClient.ts";
+import BodocordClient from "./structures/BodocordClient.ts";
 import { getConfig } from "./util/configUtil.ts";
 
 interface EnvironmentVariables {
