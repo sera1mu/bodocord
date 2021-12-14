@@ -1,5 +1,5 @@
 import { Client, ClientOptions, event } from "harmony";
-import { DestinationStream, LoggerOptions, pino } from "pino";
+import pino from "pino";
 
 /**
  * Bodocord Discord gateway client
@@ -12,7 +12,7 @@ export default class BodocordClient extends Client {
    * @param options Client options
    */
   constructor(
-    loggerOptionsOrStream?: LoggerOptions | DestinationStream,
+    loggerOptionsOrStream?: pino.LoggerOptions | pino.DestinationStream,
     options?: ClientOptions,
   ) {
     super(options);
