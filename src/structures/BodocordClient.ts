@@ -5,7 +5,7 @@ import pino from "pino";
  * Bodocord Discord gateway client
  */
 export default class BodocordClient extends Client {
-  private logger: pino.Logger;
+  private readonly logger: pino.Logger;
 
   /**
    * @param loggerOptionsOrStream Pino logger
