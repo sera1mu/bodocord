@@ -1,7 +1,7 @@
 import pino from "pino";
 import { Intents } from "harmony";
 import BodocordClient from "./structures/BodocordClient.ts";
-import { getConfig } from "./util/configUtil.ts";
+import { Config, getConfig } from "./util/configUtil.ts";
 
 /**
  * Bodocord necessary environment variables
@@ -48,13 +48,13 @@ const getEnv =
 
 /**
  * Shutdown bot gracefully
- * @param client 
- * @param logger 
+ * @param client
+ * @param logger
  */
 const shutdown = async function gracefullyShutdownBot(
   client: BodocordClient,
   logger: pino.Logger,
-) {
+): Promise<void> {
   logger.info("Shutting down...");
 
   try {
@@ -74,7 +74,9 @@ const shutdown = async function gracefullyShutdownBot(
  * Boot the bot
  * @returns System logger
  */
-const boot = async function bootBot() {
+const boot = async function bootBot(): Promise<
+  { client: BodocordClient; config: Config; logger: pino.Logger }
+> {
   // Get env
   const { BC_CONFIG, BC_TOKEN } = getEnv();
 
@@ -91,8 +93,12 @@ const boot = async function bootBot() {
   await client.connect(BC_TOKEN, Intents.None);
 
   // Add signal listeners (UNSTABLE)
-  Deno.addSignalListener("SIGTERM", () => shutdown(client, logger));
-  Deno.addSignalListener("SIGINT", () => shutdown(client, logger));
+  Deno.addSignalListener("SIGTERM", async () => {
+    await shutdown(client, logger);
+  });
+  Deno.addSignalListener("SIGINT", async () => {
+    await shutdown(client, logger);
+  });
 
   return { client, config, logger };
 };
