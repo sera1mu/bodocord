@@ -26,16 +26,14 @@ export default class BodocordClient extends Client {
   }
 
   @event()
-  ready(): void {
+  async ready(): Promise<void> {
     this.logger.info("Registering commands...");
 
     // Register commands
-    this.commands.forEach(async (command) => {
+    await Promise.all(this.commands.map(async (command) => {
       await this.interactions.commands.create(command.commandPartial);
       this.logger.info(`Registered command ${command.commandPartial.name}`);
-    });
-
-    this.logger.info("All commands registered.");
+    }));
 
     this.logger.info(`Ready! Logged in as ${this.user?.tag}(${this.user?.id})`);
   }
