@@ -8,16 +8,15 @@ export interface Config {
 }
 
 /**
- * Read and parse config from script
+ * Read and parse config from JSON file
  *
  * Requires `allow-read` for config file
  */
-export const getConfig = async function getConfigFromScript(
-  filePath: string,
-): Promise<Config> {
-  const config = await import(filePath);
-  // Re-parse because imported config includes `[object]`
-  const parsedConfig = JSON.parse(JSON.stringify(config));
+export const getConfig = function getConfigFromJSONFile(
+  path: string,
+): Config {
+  const rawConfig = Deno.readTextFileSync(path);
+  const parsedConfig = JSON.parse(rawConfig);
 
-  return parsedConfig;
+  return parsedConfig; 
 };
