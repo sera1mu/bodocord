@@ -1,10 +1,10 @@
-import { LoggerOptions, DestinationStream } from "pino";
+import { DestinationStream, LoggerOptions } from "pino";
 
 type Logger = "system" | "client";
 export interface Config {
   loggers: {
     [key in Logger]: LoggerOptions | DestinationStream | undefined;
-  }
+  };
 }
 
 /**
@@ -18,5 +18,5 @@ export const getConfig = function getConfigFromJSONFile(
   const rawConfig = Deno.readTextFileSync(path);
   const parsedConfig = JSON.parse(rawConfig);
 
-  return parsedConfig; 
+  return parsedConfig;
 };
