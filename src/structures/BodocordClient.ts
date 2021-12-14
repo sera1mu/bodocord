@@ -1,12 +1,14 @@
 import { Client, ClientOptions, event } from "harmony";
 import pino from "pino";
-import Command from "./Command.ts";
+import LinuxCommand from "../commands/LinuxCommand.ts";
 
 /**
  * Bodocord Discord gateway client
  */
 export default class BodocordClient extends Client {
-  readonly commands: Command[];
+  readonly commands = [
+    new LinuxCommand(),
+  ];
 
   private readonly logger: pino.Logger;
 
@@ -15,13 +17,11 @@ export default class BodocordClient extends Client {
    * @param options Client options
    */
   constructor(
-    commands: Command[],
     loggerOptionsOrStream?: pino.LoggerOptions | pino.DestinationStream,
     options?: ClientOptions,
   ) {
     super(options);
 
-    this.commands = commands;
     this.logger = pino(loggerOptionsOrStream);
   }
 

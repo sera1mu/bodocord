@@ -2,7 +2,6 @@ import pino from "pino";
 import { Intents } from "harmony";
 import BodocordClient from "./structures/BodocordClient.ts";
 import { Config, getConfig } from "./util/configUtil.ts";
-import LinuxCommand from "./commands/LinuxCommand.ts";
 
 /**
  * Bodocord necessary environment variables
@@ -87,13 +86,8 @@ const boot = async function bootBot(): Promise<
   // Create logger
   const logger = pino(config.loggers["system"]);
 
-  // Put together commands
-  const commands = [
-    new LinuxCommand(),
-  ];
-
   // Create client
-  const client = new BodocordClient(commands, config.loggers["client"]);
+  const client = new BodocordClient(config.loggers["client"]);
 
   // Connect gateway
   await client.connect(BC_TOKEN, Intents.None);
