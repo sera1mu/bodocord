@@ -89,7 +89,7 @@ const boot = async function bootBot() {
   // Connect gateway
   await client.connect(BC_TOKEN, Intents.None);
 
-  // Add signal listeners
+  // Add signal listeners (UNSTABLE)
   Deno.addSignalListener("SIGTERM", () => shutdown(client, logger));
   Deno.addSignalListener("SIGINT", () => shutdown(client, logger));
 
