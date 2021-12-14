@@ -1,4 +1,4 @@
-import * as log from "std/log";
+import pino from "pino";
 import { Intents } from "harmony";
 import BodocordClient from "./structures/BodocordClient.ts";
 import { getConfig } from "./util/configUtil.ts";
@@ -42,14 +42,14 @@ const boot = async function bootBot() {
   // Get config
   const config = await getConfig(BC_CONFIG);
 
-  // Setup config
-  await log.setup(config.logConfig);
+  // Create logger
+  const logger = pino(config.loggers['system']);
 
   // Create client
-  const client = new BodocordClient(log.getLogger("Client"));
+  const client = new BodocordClient(config.loggers['client']);
 
   // Connect gateway
-  client.connect(BC_TOKEN, Intents.None);
+  await client.connect(BC_TOKEN, Intents.None);
 };
 
 await boot();
