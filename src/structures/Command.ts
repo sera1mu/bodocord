@@ -20,10 +20,10 @@ export default class Command {
   /**
    * Client runs when command initializing
    */
-  init?(client: BodocordClient): Promise<void>;
+  init?(client: BodocordClient): void | Promise<void>;
 
   /**
    * Command action
    */
-  run?(i: Interaction): void;
+  run?(i: Interaction): void | Promise<void>;
 }
