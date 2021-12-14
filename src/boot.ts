@@ -60,6 +60,7 @@ const shutdown = async function gracefullyShutdownBot(
   try {
     // Destroy client
     await client.destroy();
+    logger.info("Destroyed client.");
   } catch (err) {
     logger.error(err, "Failed to destroy client gracefully.");
     logger.info("Exit code is 1.");
