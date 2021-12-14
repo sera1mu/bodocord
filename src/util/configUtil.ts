@@ -1,7 +1,10 @@
-import { LogConfig } from "std/log";
+import { LoggerOptions, DestinationStream } from "pino";
 
+type Logger = "system" | "client";
 export interface Config {
-  logConfig: LogConfig;
+  loggers: {
+    [key in Logger]: LoggerOptions | DestinationStream | undefined;
+  }
 }
 
 /**
