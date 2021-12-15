@@ -30,10 +30,18 @@ export default class BodocordClient extends Client {
     this.logger.info("Registering commands...");
 
     // Register commands
-    await Promise.all(this.commands.map(async (command) => {
-      await this.interactions.commands.create(command.commandPartial);
-      this.logger.info(`Registered command ${command.commandPartial.name}`);
-    }));
+    this.commands.map((command) => {
+      this.interactions.commands.create(
+        command.commandPartial,
+      )
+        .then(async (cmd) => this.logger.info(`Created command ${cmd.name}.`))
+        .catch((err) =>
+          this.logger.error(
+            err,
+            `Failed to create command ${command.commandPartial.name}`,
+          )
+        );
+    });
 
     this.logger.info(`Ready! Logged in as ${this.user?.tag}(${this.user?.id})`);
   }
