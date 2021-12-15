@@ -31,11 +31,10 @@ export default class BodocordClient extends Client {
     this.logger = pino(loggerOptionsOrStream);
   }
 
-  @event()
-  async ready(): Promise<void> {
-    this.logger.info("Registering commands...");
-
-    // Register commands
+  /**
+   * Register slash commands
+   */
+  private registerCommands() {
     for (const key of Object.keys(this.commands)) {
       const command = this.commands[key];
 
@@ -50,6 +49,14 @@ export default class BodocordClient extends Client {
           )
         );
     }
+  }
+
+  @event()
+  async ready(): Promise<void> {
+    this.logger.info("Registering commands...");
+
+    // Register commands
+    this.registerCommands();
 
     this.logger.info(`Ready! Logged in as ${this.user?.tag}(${this.user?.id})`);
   }
