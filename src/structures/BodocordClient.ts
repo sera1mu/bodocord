@@ -1,4 +1,11 @@
-import { Client, ClientOptions, event, Interaction, slash } from "harmony";
+import {
+  Client,
+  ClientOptions,
+  event,
+  Interaction,
+  InteractionResponseType,
+  slash,
+} from "harmony";
 import pino from "pino";
 import LinuxCommand from "../commands/LinuxCommand.ts";
 import Command from "./Command.ts";
@@ -51,6 +58,27 @@ export default class BodocordClient extends Client {
     }
   }
 
+  /**
+   * Run command
+   */
+  private async runCommand(command: Command, i: Interaction): Promise<void> {
+    // Check run method is undefined
+    if (typeof command.run !== "undefined") {
+      await command.run(i);
+    } else {
+      // Response run method is undefined
+      i.respond({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        content: "Sorry. This command cannot use now.",
+      }).then(() => {
+        throw new Error("The command run method is undefined.");
+      })
+        .catch((err) => {
+          throw err;
+        });
+    }
+  }
+
   @event()
   async ready(): Promise<void> {
     this.logger.info("Registering commands...");
@@ -63,6 +91,6 @@ export default class BodocordClient extends Client {
 
   @slash()
   async linux(i: Interaction): Promise<void> {
-    this.commands.linux.run(i);
+    await this.runCommand(this.commands.linux, i);
   }
 }
