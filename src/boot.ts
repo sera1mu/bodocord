@@ -51,21 +51,20 @@ const getEnv =
  * @param client Bot client
  * @param systemLogger
  */
-const shutdown = async function gracefullyShutdownBot(
+const shutdown = function gracefullyShutdownBot(
   client: BodocordClient,
   systemLogger: pino.Logger,
-): Promise<void> {
+): void {
   systemLogger.info("Shutting down...");
 
-  try {
-    // Destroy client
-    await client.destroy();
-    systemLogger.info("Destroyed client.");
-  } catch (err) {
-    systemLogger.error(err, "Failed to destroy client gracefully.");
-    systemLogger.info("Exit code is 1.");
-    Deno.exit(1);
-  }
+  // Destroy client
+  client.destroy()
+    .then(() => systemLogger.info("Destroyed client."))
+    .catch((err) => {
+      systemLogger.error(err, "Failed to destroy client gracefully.");
+      systemLogger.info("Exit code is 1.");
+      Deno.exit(1);
+    });
 
   systemLogger.info("Exit code is 0.");
 };
@@ -93,11 +92,11 @@ const boot = async function bootBot(): Promise<
   await client.connect(BC_TOKEN, Intents.None);
 
   // Add signal listeners (UNSTABLE)
-  Deno.addSignalListener("SIGTERM", async () => {
-    await shutdown(client, logger);
+  Deno.addSignalListener("SIGTERM", () => {
+    shutdown(client, logger);
   });
-  Deno.addSignalListener("SIGINT", async () => {
-    await shutdown(client, logger);
+  Deno.addSignalListener("SIGINT", () => {
+    shutdown(client, logger);
   });
 
   return { client, config, logger };
