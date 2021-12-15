@@ -104,7 +104,7 @@ const boot = async function bootBot(): Promise<
 
 // Measure boot time
 performance.mark("bootStart");
-const { client, config, logger } = await boot();
+const { logger } = await boot();
 performance.mark("bootEnd");
 
 performance.measure(

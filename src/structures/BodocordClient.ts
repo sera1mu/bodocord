@@ -80,7 +80,7 @@ export default class BodocordClient extends Client {
   }
 
   @event()
-  async ready(): Promise<void> {
+  ready(): void {
     this.logger.info("Registering commands...");
 
     // Register commands
