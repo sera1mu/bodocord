@@ -1,4 +1,4 @@
-import { Client, ClientOptions, event } from "harmony";
+import { Client, ClientOptions, event, Interaction, slash } from "harmony";
 import pino from "pino";
 import LinuxCommand from "../commands/LinuxCommand.ts";
 
@@ -44,5 +44,10 @@ export default class BodocordClient extends Client {
     });
 
     this.logger.info(`Ready! Logged in as ${this.user?.tag}(${this.user?.id})`);
+  }
+
+  @slash()
+  async linux(i: Interaction): Promise<void> {
+    this.commands[0].run(i);
   }
 }
