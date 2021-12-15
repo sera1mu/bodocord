@@ -1,14 +1,20 @@
 import { Client, ClientOptions, event, Interaction, slash } from "harmony";
 import pino from "pino";
 import LinuxCommand from "../commands/LinuxCommand.ts";
+import Command from "./Command.ts";
+
+interface Commands {
+  linux: LinuxCommand;
+  [key: string]: Command;
+}
 
 /**
  * Bodocord Discord gateway client
  */
 export default class BodocordClient extends Client {
-  readonly commands = [
-    new LinuxCommand(),
-  ];
+  readonly commands: Commands = {
+    linux: new LinuxCommand(),
+  };
 
   private readonly logger: pino.Logger;
 
@@ -30,24 +36,26 @@ export default class BodocordClient extends Client {
     this.logger.info("Registering commands...");
 
     // Register commands
-    this.commands.map((command) => {
+    for (const key of Object.keys(this.commands)) {
+      const command = this.commands[key];
+
       this.interactions.commands.create(
         command.commandPartial,
       )
-        .then(async (cmd) => this.logger.info(`Created command ${cmd.name}.`))
+        .then((cmd) => this.logger.info(`Created command ${cmd.name}.`))
         .catch((err) =>
           this.logger.error(
             err,
             `Failed to create command ${command.commandPartial.name}`,
           )
         );
-    });
+    }
 
     this.logger.info(`Ready! Logged in as ${this.user?.tag}(${this.user?.id})`);
   }
 
   @slash()
   async linux(i: Interaction): Promise<void> {
-    this.commands[0].run(i);
+    this.commands.linux.run(i);
   }
 }
