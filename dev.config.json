@@ -1,0 +1,12 @@
+{
+  "loggers": {
+    "system": {
+      "name": "system",
+      "level": "debug"
+    },
+    "client": {
+      "name": "client",
+      "level": "debug"
+    }
+  }
+}
