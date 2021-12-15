@@ -9,9 +9,16 @@ export type Logger = "system" | "client";
  * Configuration file
  */
 export interface Config {
+  /**
+   * Logger settings
+   */
   loggers: {
     [key in Logger]: LoggerOptions | DestinationStream | undefined;
   };
+  /**
+   * Hostname of BCDice API server
+   */
+  bcdiceAPIServer: string;
 }
 
 /**
