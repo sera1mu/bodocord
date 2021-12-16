@@ -9,7 +9,5 @@ Deno.test("BCDiceOriginalTable: toBCDiceText", () => {
     items: ["A", "あ", "b", "び", "★", "＊"],
   }).toBCDiceText();
 
-  console.log(actualTable);
-
   assertEquals(actualTable, exceptedTable);
 });
