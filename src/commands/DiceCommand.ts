@@ -34,7 +34,6 @@ export default class DiceCommand extends Command {
 
   async run(i: Interaction): Promise<void> {
     const slashInteraction = i as SlashCommandInteraction;
-    console.log(slashInteraction.options);
     const sides = slashInteraction.options.length !== 0
       ? slashInteraction.options[0].value
       : 6;
