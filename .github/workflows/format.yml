@@ -19,5 +19,8 @@ jobs:
         with:
           deno-version: v1.x
 
-      - name: Lint
-        run: deno fmt --check
+      - name: Setup Denon
+        run: deno install -qAf --no-check --unstable https://deno.land/x/denon/denon.ts
+
+      - name: Check format
+        run: denon fmt:check
