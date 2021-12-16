@@ -1,0 +1,24 @@
+{
+  "$schema": "https://deno.land/x/denon@2.4.9/schema.json",
+  "scripts": {
+    "start": {
+      "cmd": "deno run --no-check ./src/boot.ts",
+      "allow": ["env", "net", "read"],
+      "unstable": true,
+      "importmap": "./deps.json"
+    },
+    "test": {
+      "cmd": "deno test",
+      "importmap": "deps.json"
+    },
+    "lint": {
+      "cmd": "deno lint"
+    },
+    "fmt": {
+      "cmd": "deno fmt"
+    },
+    "fmt:check": {
+      "cmd": "deno fmt --check"
+    }
+  }
+}
