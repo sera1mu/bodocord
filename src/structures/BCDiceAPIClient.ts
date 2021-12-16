@@ -20,6 +20,7 @@ export interface APIVersion {
  * Check arg is APIVersion
  */
 export const isAPIVersion = function isArgAPIVersion(
+  // deno-lint-ignore no-explicit-any
   arg: any,
 ): arg is APIVersion {
   const exceptedKeysJSON = JSON.stringify(["api", "bcdice"]);
@@ -52,6 +53,7 @@ export interface APIAdmin {
 /**
  * Check arg is APIAdmin
  */
+// deno-lint-ignore no-explicit-any
 export const isAPIAdmin = function isArgAPIVersion(arg: any): arg is APIAdmin {
   const exceptedKeysJSON = JSON.stringify(["name", "url", "email"]);
   const actualKeysJSON = JSON.stringify(Object.keys(arg));
@@ -78,21 +80,22 @@ export interface AvailableGameSystem {
   /**
    * Key for sorting game system
    */
-  sort_key: string;
+  sortKey: string;
 }
 
 /**
  * Check arg is GameSystemEntry
  */
 export const isAvailableGameSystem = function isArgAvailableGameSystem(
+  // deno-lint-ignore no-explicit-any
   arg: any,
 ): arg is AvailableGameSystem {
-  const exceptedKeysJSON = JSON.stringify(["id", "name", "sort_key"]);
+  const exceptedKeysJSON = JSON.stringify(["id", "name", "sortKey"]);
   const actualKeysJSON = JSON.stringify(Object.keys(arg));
 
   return exceptedKeysJSON === actualKeysJSON &&
     typeof arg.id === "string" && typeof arg.name === "string" &&
-    typeof arg.sort_key === "string";
+    typeof arg.sortKey === "string";
 };
 
 /**
@@ -112,37 +115,38 @@ export interface GameSystem {
   /**
    * Key for sorting game system
    */
-  sort_key: string;
+  sortKey: string;
 
   /**
    * RegExp to check specified command is executable
    */
-  command_pattern: RegExp;
+  commandPattern: RegExp;
 
   /**
    * Help message
    */
-  help_message: string;
+  helpMessage: string;
 }
 
 /**
  * Check arg is GameSystem
  */
 export const isGameSystem = function isArgGameSystem(
+  // deno-lint-ignore no-explicit-any
   arg: any,
 ): arg is GameSystem {
   const exceptedKeysJSON = JSON.stringify([
     "id",
     "name",
-    "sort_key",
-    "command_pattern",
-    "help_message",
+    "sortKey",
+    "commandPattern",
+    "helpMessage",
   ]);
   const actualKeysJSON = JSON.stringify(Object.keys(arg));
 
   return exceptedKeysJSON === actualKeysJSON &&
     typeof arg.id === "string" && typeof arg.name === "string" &&
-    typeof arg.sort_key === "string" && arg.command_pattern instanceof RegExp;
+    typeof arg.sortKey === "string" && arg.commandPattern instanceof RegExp;
 };
 
 /**
@@ -168,6 +172,7 @@ export interface DiceRoll {
 /**
  * Check arg is DiceRoll
  */
+// deno-lint-ignore no-explicit-any
 export const isDiceRoll = function isArgDiceRoll(arg: any): arg is DiceRoll {
   const exceptedKeysJSON = JSON.stringify([
     "kind",
@@ -226,6 +231,7 @@ export interface DiceRollResults {
  * Check arg is DiceRollResults
  */
 export const isDiceRollResults = function isArgDiceRollResults(
+  // deno-lint-ignore no-explicit-any
   arg: any,
 ): arg is DiceRollResults {
   const exceptedKeysJSON = JSON.stringify([
@@ -273,6 +279,7 @@ export interface OriginalTableResults {
  * Check arg is OriginalTableResults
  */
 export const isOriginalTableResults = function isArgOriginalTableResults(
+  // deno-lint-ignore no-explicit-any
   arg: any,
 ): arg is OriginalTableResults {
   const exceptedKeysJSON = JSON.stringify([
@@ -310,6 +317,7 @@ export default class BCDiceAPIClient {
   /**
    * Send GET request to specified URL and return JSON data
    */
+  // deno-lint-ignore no-explicit-any
   private async getRequest(url: string, options?: Options): Promise<any> {
     const res = await this.kyClient.get(url, options);
     const json = await res.json();
@@ -319,6 +327,7 @@ export default class BCDiceAPIClient {
   /**
    * Send POST request to specified URL and return JSON data
    */
+  // deno-lint-ignore no-explicit-any
   private async postRequest(url: string, options?: Options): Promise<any> {
     const res = await this.kyClient.post(url, options);
     const json = await res.json();
@@ -402,14 +411,14 @@ export default class BCDiceAPIClient {
     // Remove `ok` property from JSON (It don't need)
     delete json.ok;
 
-    if (typeof json.command_pattern === "undefined") {
+    if (typeof json.commandPattern === "undefined") {
       throw new Error(
         `The response is invalid:\n${JSON.stringify(json)}`,
       );
     }
 
-    // Convert command_pattern to RegExp
-    json.command_pattern = new RegExp(json.command_pattern);
+    // Convert commandPattern to RegExp
+    json.commandPattern = new RegExp(json.commandPattern);
 
     // Check JSON correctly
     if (!isGameSystem(json)) {

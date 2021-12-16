@@ -1,5 +1,4 @@
 import {
-  default as BCDiceAPIClient,
   isAPIAdmin,
   isAPIVersion,
   isAvailableGameSystem,
@@ -50,7 +49,7 @@ Deno.test("BCDiceAPIClient: isAvailableGameSystem", () => {
   const correct = {
     id: "example-id",
     name: "example-name",
-    sort_key: "example-sort_key",
+    sortKey: "example-sort_key",
   };
 
   const incorrects = [{}, { id: 0, name: 1, sort_key: 2 }];
@@ -131,9 +130,9 @@ Deno.test("BCDiceAPIClient: isGameSystem", () => {
   const correct = {
     id: "example-id",
     name: "example-name",
-    sort_key: "example-sort_key",
-    command_pattern: new RegExp(/example/g),
-    help_message: "example-help_message",
+    sortKey: "example-sort_key",
+    commandPattern: new RegExp(/example/g),
+    helpMessage: "example-help_message",
   };
 
   const incorrects = [{}, {
