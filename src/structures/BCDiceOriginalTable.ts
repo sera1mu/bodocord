@@ -34,7 +34,7 @@ export default class BCDiceOriginalTable implements IBCDiceOriginalTable {
   }
 
   /**
-   * Convert table to text for BCDice
+   * Convert table to text for BCDice (URI encoded)
    */
   toBCDiceText(): string {
     const length = this.items.length;
@@ -51,6 +51,9 @@ export default class BCDiceOriginalTable implements IBCDiceOriginalTable {
       }
     }
 
-    return `${this.title}\n${this.command}\n${parsedItems}`;
+    const decodedData = `${this.title}\n${this.command}\n${parsedItems}`;
+    const encodedData = encodeURI(decodedData);
+
+    return encodedData;
   }
 }
