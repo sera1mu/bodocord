@@ -2,6 +2,7 @@ import pino from "pino";
 import { Intents } from "harmony";
 import BodocordClient from "./structures/BodocordClient.ts";
 import { Config, getConfig } from "./util/configUtil.ts";
+import BCDiceAPIClient from "./structures/BCDiceAPIClient.ts";
 
 /**
  * Bodocord necessary environment variables
@@ -85,8 +86,11 @@ const boot = async function bootBot(): Promise<
   // Create logger
   const logger = pino(config.loggers["system"]);
 
+  // Create BCDice client
+  const bcdiceClient = new BCDiceAPIClient(config.bcdiceAPIServer);
+
   // Create client
-  const client = new BodocordClient(config.loggers["client"]);
+  const client = new BodocordClient(bcdiceClient, config.loggers["client"]);
 
   // Connect gateway
   await client.connect(BC_TOKEN, Intents.None);

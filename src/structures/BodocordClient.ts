@@ -7,11 +7,14 @@ import {
   slash,
 } from "harmony";
 import pino from "pino";
+import DiceCommand from "../commands/DiceCommand.ts";
 import LinuxCommand from "../commands/LinuxCommand.ts";
+import BCDiceAPIClient from "./BCDiceAPIClient.ts";
 import Command from "./Command.ts";
 
 interface Commands {
   linux: LinuxCommand;
+  dice: DiceCommand;
   [key: string]: Command;
 }
 
@@ -19,9 +22,9 @@ interface Commands {
  * Bodocord Discord gateway client
  */
 export default class BodocordClient extends Client {
-  readonly commands: Commands = {
-    linux: new LinuxCommand(),
-  };
+  readonly commands: Commands;
+
+  private readonly bcdiceClient: BCDiceAPIClient;
 
   private readonly logger: pino.Logger;
 
@@ -30,12 +33,18 @@ export default class BodocordClient extends Client {
    * @param options Client options
    */
   constructor(
+    bcdiceClient: BCDiceAPIClient,
     loggerOptionsOrStream?: pino.LoggerOptions | pino.DestinationStream,
     options?: ClientOptions,
   ) {
     super(options);
 
+    this.bcdiceClient = bcdiceClient;
     this.logger = pino(loggerOptionsOrStream);
+    this.commands = {
+      linux: new LinuxCommand(),
+      dice: new DiceCommand(bcdiceClient),
+    };
   }
 
   /**
@@ -64,7 +73,25 @@ export default class BodocordClient extends Client {
   private async runCommand(command: Command, i: Interaction): Promise<void> {
     // Check run method is undefined
     if (typeof command.run !== "undefined") {
-      await command.run(i);
+      try {
+        await command.run(i);
+        this.logger.info({
+          userId: i.user?.id,
+          guildId: i.guild?.id,
+          channelId: i.channel?.id,
+          messageId: i.message?.id,
+        }, `Runned command ${command.commandPartial.name}.`);
+      } catch (err) {
+        this.logger.error(
+          {
+            userId: i.user?.id,
+            guildId: i.guild?.id,
+            channelId: i.channel?.id,
+            messageId: i.message?.id,
+          },
+          `Failed to run command ${command.commandPartial.name}: ${err.stack}`,
+        );
+      }
     } else {
       // Response run method is undefined
       i.respond({
@@ -92,5 +119,10 @@ export default class BodocordClient extends Client {
   @slash()
   async linux(i: Interaction): Promise<void> {
     await this.runCommand(this.commands.linux, i);
+  }
+
+  @slash()
+  async dice(i: Interaction): Promise<void> {
+    await this.runCommand(this.commands.dice, i);
   }
 }
