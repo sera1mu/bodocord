@@ -5,20 +5,25 @@
       "cmd": "deno run --no-check ./src/boot.ts",
       "allow": ["env", "net", "read"],
       "unstable": true,
-      "importmap": "./deps.json"
+      "importmap": "./deps.json",
+      "watch": false
     },
     "test": {
       "cmd": "deno test",
-      "importmap": "deps.json"
+      "importmap": "deps.json",
+      "watch": false
     },
     "lint": {
-      "cmd": "deno lint"
+      "cmd": "deno lint",
+      "watch": false
     },
     "fmt": {
-      "cmd": "deno fmt"
+      "cmd": "deno fmt",
+      "watch": false
     },
     "fmt:check": {
-      "cmd": "deno fmt --check"
+      "cmd": "deno fmt --check",
+      "watch": false
     }
   }
 }
