@@ -41,7 +41,7 @@ export default class DiceCommand extends Command {
 
     await i.respond({
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      content: `:game_die: ${sides}面ダイス: ${results.rands[0].value}`,
+      content: `:game_die: ${sides} sides Dice: ${results.rands[0].value}`,
     });
   }
 }
