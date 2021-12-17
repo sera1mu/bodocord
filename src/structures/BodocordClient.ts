@@ -79,7 +79,7 @@ export default class BodocordClient extends Client {
           userId: i.user?.id,
           guildId: i.guild?.id,
           channelId: i.channel?.id,
-          messageId: i.message?.id,
+          interactionId: i.id,
         }, `Runned command ${command.commandPartial.name}.`);
       } catch (err) {
         this.logger.error(
@@ -88,6 +88,7 @@ export default class BodocordClient extends Client {
             guildId: i.guild?.id,
             channelId: i.channel?.id,
             messageId: i.message?.id,
+            interactionId: i.id,
           },
           `Failed to run command ${command.commandPartial.name}: ${err.stack}`,
         );
