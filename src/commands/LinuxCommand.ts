@@ -1,5 +1,5 @@
 import { Interaction, InteractionResponseType } from "harmony";
-import Command from "../structures/Command.ts";
+import Command from "./Command.ts";
 
 export default class LinuxCommand extends Command {
   constructor() {

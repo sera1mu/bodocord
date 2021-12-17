@@ -1,8 +1,8 @@
 import pino from "pino";
 import { Intents } from "harmony";
-import BodocordClient from "./structures/BodocordClient.ts";
+import BodocordClient from "./discord/BodocordClient.ts";
 import { Config, getConfig } from "./util/configUtil.ts";
-import BCDiceAPIClient from "./structures/BCDiceAPIClient.ts";
+import BCDiceAPIClient from "./bcdice/BCDiceAPIClient.ts";
 
 /**
  * Bodocord necessary environment variables

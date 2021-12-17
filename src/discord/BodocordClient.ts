@@ -9,8 +9,8 @@ import {
 import pino from "pino";
 import DiceCommand from "../commands/DiceCommand.ts";
 import LinuxCommand from "../commands/LinuxCommand.ts";
-import BCDiceAPIClient from "./BCDiceAPIClient.ts";
-import Command from "./Command.ts";
+import BCDiceAPIClient from "../bcdice/BCDiceAPIClient.ts";
+import Command from "../commands/Command.ts";
 
 interface Commands {
   linux: LinuxCommand;

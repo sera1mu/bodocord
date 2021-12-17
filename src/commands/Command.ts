@@ -1,5 +1,5 @@
 import { ApplicationCommandPartial, Interaction } from "harmony";
-import BodocordClient from "./BodocordClient.ts";
+import BodocordClient from "../discord/BodocordClient.ts";
 
 /**
  * Base of Slash command

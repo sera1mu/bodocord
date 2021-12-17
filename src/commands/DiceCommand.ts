@@ -4,8 +4,8 @@ import {
   InteractionResponseType,
   SlashCommandInteraction,
 } from "harmony";
-import Command from "../structures/Command.ts";
-import BCDiceAPIClient from "../structures/BCDiceAPIClient.ts";
+import Command from "./Command.ts";
+import BCDiceAPIClient from "../bcdice/BCDiceAPIClient.ts";
 
 export default class DiceCommand extends Command {
   /**
