@@ -1,5 +1,6 @@
-import { default as ky, Options } from "ky";
+import { default as ky, HTTPError, Options } from "ky";
 import BCDiceOriginalTable from "./BCDiceOriginalTable.ts";
+import BCDiceError from "./BCDiceError.ts";
 
 /**
  * BCDice-API Version
@@ -343,12 +344,29 @@ export default class BCDiceAPIClient {
    */
   async getAPIVersion(): Promise<APIVersion> {
     // Get data
-    const json = await this.getRequest("v2/version");
+    const json = await this.getRequest("v2/version")
+      .catch((err) => {
+        throw new BCDiceError(
+          "CONNECTION_ERROR",
+          "Failed to communicate with API.",
+          {
+            cause: err,
+          },
+        );
+      });
 
     // Check JSON correctly
     if (!isAPIVersion(json)) {
-      throw new TypeError(
-        `The response is invalid:\n${JSON.stringify(json)}`,
+      const causeError = new TypeError(
+        `The syntax of the response is incorrect:\n${JSON.stringify(json)}`,
+      );
+
+      throw new BCDiceError(
+        "INCORRECT_RESPONSE",
+        "The response is incorrect.",
+        {
+          cause: causeError,
+        },
       );
     }
 
@@ -360,12 +378,27 @@ export default class BCDiceAPIClient {
    */
   async getAPIAdmin(): Promise<APIAdmin> {
     // Get data
-    const json = await this.getRequest("v2/admin");
+    const json = await this.getRequest("v2/admin")
+      .catch((err) => {
+        throw new BCDiceError(
+          "CONNECTION_ERROR",
+          "Failed to communicate with API.",
+          {
+            cause: err,
+          },
+        );
+      });
 
     // Check JSON correctly
     if (!isAPIAdmin(json)) {
-      throw new TypeError(
-        `The response is invalid:\n${JSON.stringify(json)}`,
+      const causeError = new TypeError(
+        `The syntax of the response is incorrect:\n${JSON.stringify(json)}`,
+      );
+
+      throw new BCDiceError(
+        "INCORRECT_RESPONSE",
+        "The response is incorrect.",
+        { cause: causeError },
       );
     }
 
@@ -377,7 +410,16 @@ export default class BCDiceAPIClient {
    */
   async getAvailableGameSystems(): Promise<AvailableGameSystem[]> {
     // Get data
-    const json = await this.getRequest("v2/game_system");
+    const json = await this.getRequest("v2/game_system")
+      .catch((err) => {
+        throw new BCDiceError(
+          "CONNECTION_ERROR",
+          "Failed to communicate with API.",
+          {
+            cause: err,
+          },
+        );
+      });
 
     // Check JSON correctly
     // Check game_system is not undefined
@@ -385,18 +427,30 @@ export default class BCDiceAPIClient {
       // Check all systems is corrrect
       for (const entry of json.game_system) {
         if (!isAvailableGameSystem(entry)) {
-          throw new TypeError(
-            `The response is invalid. This system is invalid:\n${
+          const causeError = new TypeError(
+            `The syntax of the game system is incorrect:\n${
               JSON.stringify(entry)
             }`,
+          );
+
+          throw new BCDiceError(
+            "INCORRECT_RESPONSE",
+            "The game system is incorrect.",
+            { cause: causeError },
           );
         }
       }
     } else {
-      throw new TypeError(
-        `The response is invalid. Property game_system is undefined:\n${
+      const causeError = new TypeError(
+        `The syntax of the response is incorrect. Property game_system is undefined:\n${
           JSON.stringify(json)
         }`,
+      );
+
+      throw new BCDiceError(
+        "INCORRECT_RESPONSE",
+        "The response is incorrect.",
+        { cause: causeError },
       );
     }
 
@@ -410,24 +464,54 @@ export default class BCDiceAPIClient {
    */
   async getGameSystem(id: string): Promise<GameSystem> {
     // Get data
-    const json = await this.getRequest(`v2/game_system/${id}`);
+    const json = await this.getRequest(`v2/game_system/${id}`)
+      .catch((err) => {
+        // 400 Bad Request means game system unsupported
+        if (err instanceof HTTPError && err.response.status === 400) {
+          throw new BCDiceError(
+            "UNSUPPORTED_SYSTEM",
+            "The specified game system is unsupported.",
+            { cause: err },
+          );
+        } else {
+          throw new BCDiceError(
+            "CONNECTION_ERROR",
+            "Failed to communicate with API.",
+            { cause: err },
+          );
+        }
+      });
 
     // Remove `ok` property from JSON (It don't need)
     delete json.ok;
 
-    if (typeof json.commandPattern === "undefined") {
-      throw new TypeError(
-        `The response is invalid:\n${JSON.stringify(json)}`,
+    if (typeof json.command_pattern === "undefined") {
+      const causeError = new TypeError(
+        `The syntax of the response is incorrect. Property command_pattern is undefined:\n${
+          JSON.stringify(json)
+        }`,
+      );
+
+      throw new BCDiceError(
+        "INCORRECT_RESPONSE",
+        "The response is incorrect.",
+        { cause: causeError },
       );
     }
 
     // Convert commandPattern to RegExp
-    json.commandPattern = new RegExp(json.commandPattern);
+    json.command_pattern = new RegExp(json.commandPattern);
 
     // Check JSON correctly
     if (!isGameSystem(json)) {
-      throw new TypeError(
-        `The response is invalid:\n${JSON.stringify(json)}`,
+      const causeError = new TypeError(
+        `The syntax of the response is incorrect:\n${JSON.stringify(json)}`,
+      );
+
+      throw new BCDiceError(
+        "INCORRECT_RESPONSE",
+        "The response is incorrect.",
+        { cause: causeError },
       );
     }
 
@@ -446,6 +530,34 @@ export default class BCDiceAPIClient {
       searchParams: {
         command,
       },
+    }).catch(async (err) => {
+      // 400 Bad Request means command unsupported or game system unsupported
+      if (err instanceof HTTPError && err.response.status === 400) {
+        // Parse to JSON
+        const json = await err.response.json();
+
+        switch (json.reason) {
+          case "unsupported game system":
+            throw new BCDiceError(
+              "UNSUPPORTED_SYSTEM",
+              "The specified game system is unsupported.",
+              { cause: err },
+            );
+
+          case "unsupported command":
+            throw new BCDiceError(
+              "UNSUPPORTED_COMMAND",
+              "The specified command is unsupported.",
+              { cause: err },
+            );
+        }
+      } else {
+        throw new BCDiceError(
+          "CONNECTION_ERROR",
+          "Failed to communicate with API.",
+          { cause: err },
+        );
+      }
     });
 
     // Remove `ok` property from JSON (It don't need)
@@ -453,8 +565,14 @@ export default class BCDiceAPIClient {
 
     // Check JSON correctly
     if (!isDiceRollResults(json)) {
-      throw new TypeError(
-        `The response is invalid:\n${JSON.stringify(json)}`,
+      const causeError = new TypeError(
+        `The syntax of the response is incorrect:\n${JSON.stringify(json)}`,
+      );
+
+      throw new BCDiceError(
+        "INCORRECT_RESPONSE",
+        "The response is incorrect.",
+        { cause: causeError },
       );
     }
 
@@ -473,6 +591,21 @@ export default class BCDiceAPIClient {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: `table=${parsedTable}`,
+    }).catch((err) => {
+      // 500 Internal Server Error means table is unsupported
+      if (err instanceof HTTPError && err.response.status === 500) {
+        throw new BCDiceError(
+          "UNSUPPORTED_TABLE",
+          "The specified table is unsupported.",
+          { cause: err },
+        );
+      } else {
+        throw new BCDiceError(
+          "CONNECTION_ERROR",
+          "Failed to communicate with API.",
+          { cause: err },
+        );
+      }
     });
 
     // Remove `ok` property from JSON (It don't need)
@@ -480,8 +613,14 @@ export default class BCDiceAPIClient {
 
     // Check JSON correctly
     if (!isOriginalTableResults(json)) {
-      throw new TypeError(
-        `The response is invalid:\n${JSON.stringify(json)}`,
+      const causeError = new TypeError(
+        `The syntax of the response is incorrect:\n${JSON.stringify(json)}`,
+      );
+
+      throw new BCDiceError(
+        "INCORRECT_RESPONSE",
+        "The response is incorrect.",
+        { cause: causeError },
       );
     }
 
