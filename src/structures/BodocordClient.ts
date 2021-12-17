@@ -87,7 +87,6 @@ export default class BodocordClient extends Client {
             userId: i.user?.id,
             guildId: i.guild?.id,
             channelId: i.channel?.id,
-            messageId: i.message?.id,
             interactionId: i.id,
           },
           `Failed to run command ${command.commandPartial.name}: ${err.stack}`,
