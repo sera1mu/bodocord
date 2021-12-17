@@ -48,7 +48,7 @@ export default class DiceCommand extends Command {
         const hash = await generateInteractionErrorHash(i);
         const embed = new InternalErrorEmbed(hash);
 
-        await i.respond({ embeds: [embed] });
+        await i.respond({ embeds: [embed], ephemeral: true });
         throw new CommandError(hash, "Failed to roll the dice with BCDice.", {
           cause: err,
         });
