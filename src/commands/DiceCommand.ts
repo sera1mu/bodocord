@@ -6,6 +6,10 @@ import {
 } from "harmony";
 import Command from "./Command.ts";
 import BCDiceAPIClient from "../bcdice/BCDiceAPIClient.ts";
+import BCDiceError from "../bcdice/BCDiceError.ts";
+import CommandError from "./CommandError.ts";
+import InternalErrorEmbed from "../discord/embeds/InternalErrorEmbed.ts";
+import { generateInteractionErrorHash } from "../util/hashUtil.ts";
 
 export default class DiceCommand extends Command {
   /**
@@ -37,7 +41,19 @@ export default class DiceCommand extends Command {
     const sides = slashInteraction.options.length !== 0
       ? slashInteraction.options[0].value
       : 6;
-    const results = await this.bcdice.diceRoll("DiceBot", `1D${sides}`);
+
+    const results = await this.bcdice.diceRoll("DiceBot", `1D${sides}`)
+      .catch(async (err) => {
+        // UNSUPPORTED_COMMAND and UNSUPPORTED_SYSTEM are not possible,
+        // so treat all as internal errors
+        const hash = await generateInteractionErrorHash(i);
+        const embed = new InternalErrorEmbed(hash);
+
+        await i.respond({ embeds: [embed] });
+        throw new CommandError(hash, "Failed to roll the dice with BCDice.", {
+          cause: err,
+        });
+      });
 
     await i.respond({
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
