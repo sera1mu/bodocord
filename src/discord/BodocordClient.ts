@@ -9,9 +9,9 @@ import {
 import pino from "pino";
 import DiceCommand from "../commands/DiceCommand.ts";
 import LinuxCommand from "../commands/LinuxCommand.ts";
+import CommandError from "../commands/CommandError.ts";
 import BCDiceAPIClient from "../bcdice/BCDiceAPIClient.ts";
 import Command from "../commands/Command.ts";
-import { generateInteractionErrorHash } from "../util/hashUtil.ts";
 
 interface Commands {
   linux: LinuxCommand;
@@ -83,17 +83,31 @@ export default class BodocordClient extends Client {
           interactionId: i.id,
         }, `Runned command ${command.commandPartial.name}.`);
       } catch (err) {
-        this.logger.error(
-          {
-            userId: i.user?.id,
-            guildId: i.guild?.id,
-            channelId: i.channel?.id,
-            interactionId: i.id,
-            hash: await generateInteractionErrorHash(i),
-            err,
-          },
-          `Failed to run command ${command.commandPartial.name}.`,
-        );
+        if (err instanceof CommandError) {
+          this.logger.error(
+            {
+              userId: i.user?.id,
+              guildId: i.guild?.id,
+              channelId: i.channel?.id,
+              interactionId: i.id,
+              hash: err.hash,
+              err,
+            },
+            `Failed to run command ${command.commandPartial.name}.`,
+          );
+        } else {
+          this.logger.error(
+            {
+              userId: i.user?.id,
+              guildId: i.guild?.id,
+              channelId: i.channel?.id,
+              interactionId: i.id,
+              hash: undefined,
+              err,
+            },
+            `Failed to run command ${command.commandPartial.name}.`,
+          );
+        }
       }
     } else {
       // Response run method is undefined
