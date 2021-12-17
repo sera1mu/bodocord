@@ -29,6 +29,7 @@ export default class ErrorEmbed extends Embed {
       },
     });
 
+    this.setColor("crimson");
     this.message = message;
     this.hash = hash;
   }

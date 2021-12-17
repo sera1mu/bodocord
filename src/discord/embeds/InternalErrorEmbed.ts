@@ -15,6 +15,7 @@ export default class InternalErrorEmbed extends ErrorEmbed {
 
     super(message, hash);
 
+    this.setColor("firebrick");
     this.title = "Internal Error";
   }
 }
