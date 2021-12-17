@@ -6,7 +6,6 @@ import {
 } from "harmony";
 import Command from "./Command.ts";
 import BCDiceAPIClient from "../bcdice/BCDiceAPIClient.ts";
-import BCDiceError from "../bcdice/BCDiceError.ts";
 import CommandError from "./CommandError.ts";
 import InternalErrorEmbed from "../discord/embeds/InternalErrorEmbed.ts";
 import { generateInteractionErrorHash } from "../util/hashUtil.ts";
