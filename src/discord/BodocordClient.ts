@@ -11,6 +11,7 @@ import DiceCommand from "../commands/DiceCommand.ts";
 import LinuxCommand from "../commands/LinuxCommand.ts";
 import BCDiceAPIClient from "../bcdice/BCDiceAPIClient.ts";
 import Command from "../commands/Command.ts";
+import { generateInteractionErrorHash } from "../util/hashUtil.ts";
 
 interface Commands {
   linux: LinuxCommand;
@@ -88,8 +89,10 @@ export default class BodocordClient extends Client {
             guildId: i.guild?.id,
             channelId: i.channel?.id,
             interactionId: i.id,
+            hash: await generateInteractionErrorHash(i),
+            err,
           },
-          `Failed to run command ${command.commandPartial.name}: ${err.stack}`,
+          `Failed to run command ${command.commandPartial.name}.`,
         );
       }
     } else {
