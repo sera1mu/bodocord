@@ -306,9 +306,13 @@ export const isOriginalTableResults = function isArgOriginalTableResults(
  * BCDice-API Client
  */
 export default class BCDiceAPIClient {
+  readonly prefixUrl: string | URL;
+
   private readonly kyClient: ReturnType<typeof ky.create>;
 
   constructor(prefixUrl: string | URL) {
+    this.prefixUrl = prefixUrl;
+
     this.kyClient = ky.create({
       prefixUrl,
     });
