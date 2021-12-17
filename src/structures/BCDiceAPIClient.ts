@@ -347,7 +347,7 @@ export default class BCDiceAPIClient {
 
     // Check JSON correctly
     if (!isAPIVersion(json)) {
-      throw new Error(
+      throw new TypeError(
         `The response is invalid:\n${JSON.stringify(json)}`,
       );
     }
@@ -364,7 +364,7 @@ export default class BCDiceAPIClient {
 
     // Check JSON correctly
     if (!isAPIAdmin(json)) {
-      throw new Error(
+      throw new TypeError(
         `The response is invalid:\n${JSON.stringify(json)}`,
       );
     }
@@ -385,7 +385,7 @@ export default class BCDiceAPIClient {
       // Check all systems is corrrect
       for (const entry of json.game_system) {
         if (!isAvailableGameSystem(entry)) {
-          throw new Error(
+          throw new TypeError(
             `The response is invalid. This system is invalid:\n${
               JSON.stringify(entry)
             }`,
@@ -393,7 +393,7 @@ export default class BCDiceAPIClient {
         }
       }
     } else {
-      throw new Error(
+      throw new TypeError(
         `The response is invalid. Property game_system is undefined:\n${
           JSON.stringify(json)
         }`,
@@ -416,7 +416,7 @@ export default class BCDiceAPIClient {
     delete json.ok;
 
     if (typeof json.commandPattern === "undefined") {
-      throw new Error(
+      throw new TypeError(
         `The response is invalid:\n${JSON.stringify(json)}`,
       );
     }
@@ -426,7 +426,7 @@ export default class BCDiceAPIClient {
 
     // Check JSON correctly
     if (!isGameSystem(json)) {
-      throw new Error(
+      throw new TypeError(
         `The response is invalid:\n${JSON.stringify(json)}`,
       );
     }
@@ -453,7 +453,7 @@ export default class BCDiceAPIClient {
 
     // Check JSON correctly
     if (!isDiceRollResults(json)) {
-      throw new Error(
+      throw new TypeError(
         `The response is invalid:\n${JSON.stringify(json)}`,
       );
     }
@@ -480,7 +480,7 @@ export default class BCDiceAPIClient {
 
     // Check JSON correctly
     if (!isOriginalTableResults(json)) {
-      throw new Error(
+      throw new TypeError(
         `The response is invalid:\n${JSON.stringify(json)}`,
       );
     }
