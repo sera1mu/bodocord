@@ -500,7 +500,15 @@ export default class BCDiceAPIClient {
     }
 
     // Convert commandPattern to RegExp
-    json.command_pattern = new RegExp(json.commandPattern);
+    try {
+      json.command_pattern = new RegExp(json.commandPattern);
+    } catch (err) {
+      throw new BCDiceError(
+        "INCORRECT_RESPONSE",
+        "The response is incorrect.",
+        { cause: err },
+      );
+    }
 
     // Check JSON correctly
     if (!isGameSystem(json)) {
