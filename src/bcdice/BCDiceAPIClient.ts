@@ -219,7 +219,7 @@ export default class BCDiceAPIClient {
 
     // Convert commandPattern to RegExp
     try {
-      json.command_pattern = new RegExp(json.commandPattern);
+      json.commandPattern = new RegExp(json.command_pattern);
     } catch (err) {
       throw new BCDiceError(
         "INCORRECT_RESPONSE",
@@ -227,6 +227,13 @@ export default class BCDiceAPIClient {
         { cause: err },
       );
     }
+
+    json.sortKey = json.sort_key;
+    json.helpMessage = json.help_message;
+
+    delete json.command_pattern;
+    delete json.sort_key;
+    delete json.help_message;
 
     // Check JSON correctly
     if (!isGameSystem(json)) {
