@@ -6,10 +6,10 @@ import {
   isDiceRollResults,
   isGameSystem,
   isOriginalTableResults,
-} from "./BCDiceAPIClient.ts";
+} from "./BCDiceAPITypes.ts";
 import { assert } from "std/testing/asserts";
 
-Deno.test("BCDiceAPIClient: isAPIVersion", () => {
+Deno.test("BCDiceAPITypes: isAPIVersion", () => {
   const correct = {
     api: "1.0.0",
     bcdice: "1.0.0",
@@ -26,7 +26,7 @@ Deno.test("BCDiceAPIClient: isAPIVersion", () => {
   }
 });
 
-Deno.test("BCDiceAPIClient: isAPIAdmin", () => {
+Deno.test("BCDiceAPITypes: isAPIAdmin", () => {
   const correct = {
     name: "example-name",
     url: "example-url",
@@ -45,7 +45,7 @@ Deno.test("BCDiceAPIClient: isAPIAdmin", () => {
   }
 });
 
-Deno.test("BCDiceAPIClient: isAvailableGameSystem", () => {
+Deno.test("BCDiceAPITypes: isAvailableGameSystem", () => {
   const correct = {
     id: "example-id",
     name: "example-name",
@@ -60,7 +60,7 @@ Deno.test("BCDiceAPIClient: isAvailableGameSystem", () => {
   }
 });
 
-Deno.test("BCDiceAPIClient: isDiceRoll", () => {
+Deno.test("BCDiceAPITypes: isDiceRoll", () => {
   const correct = {
     kind: "normal",
     sides: 0,
@@ -79,7 +79,7 @@ Deno.test("BCDiceAPIClient: isDiceRoll", () => {
   }
 });
 
-Deno.test("BCDiceAPIClient: isDiceRollResults", () => {
+Deno.test("BCDiceAPITypes: isDiceRollResults", () => {
   const correct = {
     text: "example-text",
     secret: true,
@@ -126,7 +126,7 @@ Deno.test("BCDiceAPIClient: isDiceRollResults", () => {
   }
 });
 
-Deno.test("BCDiceAPIClient: isGameSystem", () => {
+Deno.test("BCDiceAPITypes: isGameSystem", () => {
   const correct = {
     id: "example-id",
     name: "example-name",
@@ -149,7 +149,7 @@ Deno.test("BCDiceAPIClient: isGameSystem", () => {
   }
 });
 
-Deno.test("BCDiceAPIClient: isOriginalTableResults", () => {
+Deno.test("BCDiceAPITypes: isOriginalTableResults", () => {
   const correct = {
     text: "example-text",
     rands: [{
