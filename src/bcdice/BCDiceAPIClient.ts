@@ -139,6 +139,11 @@ export default class BCDiceAPIClient {
     if (typeof json.game_system !== "undefined") {
       // Check all systems is corrrect
       for (const entry of json.game_system) {
+        const newEntry = entry;
+
+        newEntry.sortKey = newEntry.sort_key;
+        delete newEntry.sort_key;
+
         if (!isAvailableGameSystem(entry)) {
           const causeError = new TypeError(
             `The syntax of the game system is incorrect:\n${
