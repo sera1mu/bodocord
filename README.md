@@ -56,7 +56,7 @@ BC_TOKEN=YOUR_BOT_TOKEN
 4. Cache modules
 
 ```
-deno cache --no-check --unstable --import-map deps.json src/boot.ts
+deno cache --no-check=remote --unstable --import-map deps.json src/boot.ts
 ```
 
 5. Start
