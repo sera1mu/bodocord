@@ -7,6 +7,7 @@ import {
   slash,
 } from "harmony";
 import pino from "pino";
+import BCDiceCommand from "../commands/BCDiceCommand.ts";
 import DiceCommand from "../commands/DiceCommand.ts";
 import LinuxCommand from "../commands/LinuxCommand.ts";
 import CommandError from "../commands/CommandError.ts";
@@ -16,6 +17,7 @@ import Command from "../commands/Command.ts";
 interface Commands {
   linux: LinuxCommand;
   dice: DiceCommand;
+  bcdice: BCDiceCommand;
   [key: string]: Command;
 }
 
@@ -45,6 +47,7 @@ export default class BodocordClient extends Client {
     this.commands = {
       linux: new LinuxCommand(),
       dice: new DiceCommand(bcdiceClient),
+      bcdice: new BCDiceCommand(bcdiceClient),
     };
   }
 
@@ -115,11 +118,14 @@ export default class BodocordClient extends Client {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         content: "Sorry. This command cannot use now.",
       }).then(() => {
-        throw new Error("The command run method is undefined.");
-      })
-        .catch((err) => {
-          throw err;
-        });
+        this.logger.error({
+          userId: i.user?.id,
+          guildId: i.guild?.id,
+          channelId: i.channel?.id,
+          interactionId: i.id,
+          hash: undefined,
+        }, "The command run method is undefined.");
+      });
     }
   }
 
@@ -141,5 +147,10 @@ export default class BodocordClient extends Client {
   @slash()
   async dice(i: Interaction): Promise<void> {
     await this.runCommand(this.commands.dice, i);
+  }
+
+  @slash()
+  async bcdice(i: Interaction): Promise<void> {
+    await this.runCommand(this.commands.bcdice, i);
   }
 }
