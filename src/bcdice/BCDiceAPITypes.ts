@@ -21,7 +21,7 @@ export const isAPIVersion = function isArgAPIVersion(
   arg: any,
 ): arg is APIVersion {
   const exceptedKeysJSON = JSON.stringify(["api", "bcdice"]);
-  const actualKeysJSON = JSON.stringify(Object.keys(arg));
+  const actualKeysJSON = JSON.stringify(Object.keys(arg).sort());
 
   return exceptedKeysJSON === actualKeysJSON &&
     typeof arg.api === "string" && typeof arg.bcdice === "string";
@@ -52,8 +52,8 @@ export interface APIAdmin {
  */
 // deno-lint-ignore no-explicit-any
 export const isAPIAdmin = function isArgAPIVersion(arg: any): arg is APIAdmin {
-  const exceptedKeysJSON = JSON.stringify(["name", "url", "email"]);
-  const actualKeysJSON = JSON.stringify(Object.keys(arg));
+  const exceptedKeysJSON = JSON.stringify(["email", "name", "url"]);
+  const actualKeysJSON = JSON.stringify(Object.keys(arg).sort());
 
   return exceptedKeysJSON === actualKeysJSON &&
     typeof arg.name === "string" && typeof arg.url === "string" &&
@@ -88,7 +88,7 @@ export const isAvailableGameSystem = function isArgAvailableGameSystem(
   arg: any,
 ): arg is AvailableGameSystem {
   const exceptedKeysJSON = JSON.stringify(["id", "name", "sortKey"]);
-  const actualKeysJSON = JSON.stringify(Object.keys(arg));
+  const actualKeysJSON = JSON.stringify(Object.keys(arg).sort());
 
   return exceptedKeysJSON === actualKeysJSON &&
     typeof arg.id === "string" && typeof arg.name === "string" &&
@@ -133,13 +133,13 @@ export const isGameSystem = function isArgGameSystem(
   arg: any,
 ): arg is GameSystem {
   const exceptedKeysJSON = JSON.stringify([
+    "commandPattern",
+    "helpMessage",
     "id",
     "name",
     "sortKey",
-    "commandPattern",
-    "helpMessage",
   ]);
-  const actualKeysJSON = JSON.stringify(Object.keys(arg));
+  const actualKeysJSON = JSON.stringify(Object.keys(arg).sort());
 
   return exceptedKeysJSON === actualKeysJSON &&
     typeof arg.id === "string" && typeof arg.name === "string" &&
@@ -176,7 +176,7 @@ export const isDiceRoll = function isArgDiceRoll(arg: any): arg is DiceRoll {
     "sides",
     "value",
   ]);
-  const actualKeysJSON = JSON.stringify(Object.keys(arg));
+  const actualKeysJSON = JSON.stringify(Object.keys(arg).sort());
   const isKindCorrect = typeof arg.kind === "string" && arg.kind === "normal" ||
     arg.kind === "tens_d10" || arg.kind === "d9";
 
@@ -232,15 +232,15 @@ export const isDiceRollResults = function isArgDiceRollResults(
   arg: any,
 ): arg is DiceRollResults {
   const exceptedKeysJSON = JSON.stringify([
-    "text",
-    "secret",
-    "success",
-    "failure",
     "critical",
+    "failure",
     "fumble",
     "rands",
+    "secret",
+    "success",
+    "text",
   ]);
-  const actualKeysJSON = JSON.stringify(Object.keys(arg));
+  const actualKeysJSON = JSON.stringify(Object.keys(arg).sort());
 
   // Check arg.rands is iterable
   if (!(Array.isArray(arg.rands))) {
@@ -280,10 +280,10 @@ export const isOriginalTableResults = function isArgOriginalTableResults(
   arg: any,
 ): arg is OriginalTableResults {
   const exceptedKeysJSON = JSON.stringify([
-    "text",
     "rands",
+    "text",
   ]);
-  const actualKeysJSON = JSON.stringify(Object.keys(arg));
+  const actualKeysJSON = JSON.stringify(Object.keys(arg).sort());
 
   if (!(Array.isArray(arg.rands))) {
     return false;
