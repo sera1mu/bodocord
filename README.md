@@ -67,16 +67,21 @@ denon start
 
 ## Usage
 
-* `/linux` :: Send [this GIF](https://tenor.com/view/linux-trash-linuxbad-gif-18671901) to channel. (For testing)
-  * Example: `/linux`
-* `/dice [sides?: number]` :: Roll the dice. You can specify from 2 to 1000-sided dice.
-  * Example: `/dice` `/dice 100`
-* `/bcdice info` :: Displays information about the BCDice API server.
-  * Example: `/bcdice info`
-* `/bcdice systems [system?: string]` :: Displays information about the game system with the specified ID.
-  * Example: `/bcdice systems` `/bcdice systems DiceBot`
-* `/bcdice roll [system: string] [command: string]` :: Roll the dice with BCDice.
-  * Example: `/bcdice roll DiceBot 3D6+1>=9`
+- `/linux` :: Send
+  [this GIF](https://tenor.com/view/linux-trash-linuxbad-gif-18671901) to
+  channel. (For testing)
+  - Example: `/linux`
+- `/dice [sides?: number]` :: Roll the dice. You can specify from 2 to
+  1000-sided dice.
+  - Example: `/dice` `/dice 100`
+- `/bcdice info` :: Displays information about the BCDice API server.
+  - Example: `/bcdice info`
+- `/bcdice systems [system?: string]` :: Displays information about the game
+  system with the specified ID.
+  - Example: `/bcdice systems` `/bcdice systems DiceBot`
+- `/bcdice roll [system: string] [command: string]` :: Roll the dice with
+  BCDice.
+  - Example: `/bcdice roll DiceBot 3D6+1>=9`
 
 ## License
 
