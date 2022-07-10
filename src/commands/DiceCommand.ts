@@ -11,9 +11,6 @@ import InternalErrorEmbed from "../discord/embeds/InternalErrorEmbed.ts";
 import { generateInteractionErrorHash } from "../util/hashUtil.ts";
 
 export default class DiceCommand extends Command {
-  /**
-   * BCDice-API Client
-   */
   private readonly bcdice: BCDiceAPIClient;
 
   constructor(bcdice: BCDiceAPIClient) {
@@ -43,8 +40,7 @@ export default class DiceCommand extends Command {
 
     const results = await this.bcdice.diceRoll("DiceBot", `1D${sides}`)
       .catch(async (err) => {
-        // UNSUPPORTED_COMMAND and UNSUPPORTED_SYSTEM are not possible,
-        // so treat all as internal errors
+        // UNSUPPORTED_COMMAND と UNSUPPORTED_SYSTEM は絶対発生しないので内部エラーとして処理
         const hash = await generateInteractionErrorHash(i);
         const embed = new InternalErrorEmbed(hash);
 

@@ -21,9 +21,6 @@ interface Commands {
   [key: string]: Command;
 }
 
-/**
- * Bodocord Discord gateway client
- */
 export default class BodocordClient extends Client {
   readonly commands: Commands;
 
@@ -33,7 +30,7 @@ export default class BodocordClient extends Client {
 
   /**
    * @param loggerOptionsOrStream Pino logger
-   * @param options Client options
+   * @param options
    */
   constructor(
     bcdiceClient: BCDiceAPIClient,
@@ -52,7 +49,7 @@ export default class BodocordClient extends Client {
   }
 
   /**
-   * Register slash commands
+   * プロパティ `commands` にあるコマンドを登録
    */
   private registerCommands() {
     for (const key of Object.keys(this.commands)) {
@@ -71,9 +68,6 @@ export default class BodocordClient extends Client {
     }
   }
 
-  /**
-   * Run command
-   */
   private async runCommand(command: Command, i: Interaction): Promise<void> {
     // Check run method is undefined
     if (typeof command.run !== "undefined") {
@@ -132,10 +126,7 @@ export default class BodocordClient extends Client {
   @event()
   ready(): void {
     this.logger.info("Registering commands...");
-
-    // Register commands
     this.registerCommands();
-
     this.logger.info(`Ready! Logged in as ${this.user?.tag}(${this.user?.id})`);
   }
 

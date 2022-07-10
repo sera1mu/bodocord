@@ -1,21 +1,15 @@
-/**
- * BCDice-API Version
- */
 export interface APIVersion {
   /**
-   * BCDice-API version
+   * BCDice-APIのバージョン
    */
   api: string;
 
   /**
-   * BCDice version
+   * BCDice自体のバージョン
    */
   bcdice: string;
 }
 
-/**
- * Check arg is APIVersion
- */
 export const isAPIVersion = function isArgAPIVersion(
   // deno-lint-ignore no-explicit-any
   arg: any,
@@ -28,28 +22,25 @@ export const isAPIVersion = function isArgAPIVersion(
 };
 
 /**
- * BCDice-API administrator data
+ * BCDice-API の管理者情報
  */
 export interface APIAdmin {
   /**
-   * Administrator name
+   * 管理者名
    */
   name: string;
 
   /**
-   * The URL of page to see terms
+   * 利用規約のURL
    */
   url: string;
 
   /**
-   * Administrator E-Mail address
+   * 管理者のメールアドレス
    */
   email: string;
 }
 
-/**
- * Check arg is APIAdmin
- */
 // deno-lint-ignore no-explicit-any
 export const isAPIAdmin = function isArgAPIVersion(arg: any): arg is APIAdmin {
   const exceptedKeysJSON = JSON.stringify(["email", "name", "url"]);
@@ -60,29 +51,17 @@ export const isAPIAdmin = function isArgAPIVersion(arg: any): arg is APIAdmin {
     typeof arg.email === "string";
 };
 
-/**
- * Entry of BCDice-API available game systems
- */
 export interface AvailableGameSystem {
-  /**
-   * Game System ID
-   */
   id: string;
 
-  /**
-   * Game System Name
-   */
   name: string;
 
   /**
-   * Key for sorting game system
+   * ゲームシステム名をソートするためのキー
    */
   sortKey: string;
 }
 
-/**
- * Check arg is GameSystemEntry
- */
 export const isAvailableGameSystem = function isArgAvailableGameSystem(
   // deno-lint-ignore no-explicit-any
   arg: any,
@@ -95,39 +74,27 @@ export const isAvailableGameSystem = function isArgAvailableGameSystem(
     typeof arg.sortKey === "string";
 };
 
-/**
- * BCDice-API game system
- */
 export interface GameSystem {
-  /**
-   * Game System ID
-   */
   id: string;
 
-  /**
-   * Game System Name
-   */
   name: string;
 
   /**
-   * Key for sorting game system
+   * ゲームシステム名をソートするためのキー
    */
   sortKey: string;
 
   /**
-   * RegExp to check specified command is executable
+   * 指定されたコマンドがこのゲームシステムで実行可能かをチェックするための正規表現
    */
   commandPattern: RegExp;
 
   /**
-   * Help message
+   * 使い方などの追加情報
    */
   helpMessage: string;
 }
 
-/**
- * Check arg is GameSystem
- */
 export const isGameSystem = function isArgGameSystem(
   // deno-lint-ignore no-explicit-any
   arg: any,
@@ -146,29 +113,23 @@ export const isGameSystem = function isArgGameSystem(
     typeof arg.sortKey === "string" && arg.commandPattern instanceof RegExp;
 };
 
-/**
- * BCDice-API one of dice roll
- */
 export interface DiceRoll {
   /**
-   * Kind of dice roll
+   * 振ったダイスの種類
    */
   kind: "normal" | "tens_d10" | "d9";
 
   /**
-   * Number of dice roll
+   * 存在するダイスの面の数
    */
   sides: number;
 
   /**
-   * Result of dice roll
+   * ダイスの出目
    */
   value: number;
 }
 
-/**
- * Check arg is DiceRoll
- */
 // deno-lint-ignore no-explicit-any
 export const isDiceRoll = function isArgDiceRoll(arg: any): arg is DiceRoll {
   const exceptedKeysJSON = JSON.stringify([
@@ -184,49 +145,43 @@ export const isDiceRoll = function isArgDiceRoll(arg: any): arg is DiceRoll {
     typeof arg.sides === "number" && typeof arg.value === "number";
 };
 
-/**
- * BCDice-API dice roll results
- */
 export interface DiceRollResults {
   /**
-   * Output of the command
+   * コマンドの実行結果
    */
   text: string;
 
   /**
-   * Whether this dice is secret
+   * このダイスがシークレットダイスか否か
    */
   secret: boolean;
 
   /**
-   * Whether this result is success
+   * このコマンドが成功したか否か
    */
   success: boolean;
 
   /**
-   * Whether this result is failure
+   * このコマンドが失敗したか否か
    */
   failure: boolean;
 
   /**
-   * Whether this result is critical
+   * このコマンドがクリティカル(決定的成功)か否か
    */
   critical: boolean;
 
   /**
-   * Whether this result is fumble
+   * このコマンドがファンブル(致命的失敗)か否か
    */
   fumble: boolean;
 
   /**
-   * Details of this dice roll
+   * 実際に振られたダイス
    */
   rands: DiceRoll[];
 }
 
-/**
- * Check arg is DiceRollResults
- */
 export const isDiceRollResults = function isArgDiceRollResults(
   // deno-lint-ignore no-explicit-any
   arg: any,
@@ -242,12 +197,10 @@ export const isDiceRollResults = function isArgDiceRollResults(
   ]);
   const actualKeysJSON = JSON.stringify(Object.keys(arg).sort());
 
-  // Check arg.rands is iterable
   if (!(Array.isArray(arg.rands))) {
     return false;
   }
 
-  // Check all rands is correct
   for (const rand of arg.rands) {
     if (!isDiceRoll(rand)) {
       return false;
@@ -257,24 +210,21 @@ export const isDiceRollResults = function isArgDiceRollResults(
   return exceptedKeysJSON === actualKeysJSON && typeof arg.text === "string" &&
     typeof arg.secret === "boolean" && typeof arg.success === "boolean" &&
     typeof arg.failure === "boolean" && typeof arg.critical === "boolean" &&
-    typeof arg.fumble === "boolean"; // Testing rands don't need.
+    typeof arg.fumble === "boolean";
 };
 
 export interface OriginalTableResults {
   /**
-   * Output of the command
+   * 実行結果
    */
   text: string;
 
   /**
-   * Details of this dice roll
+   * 実際に振られたダイス
    */
   rands: DiceRoll[];
 }
 
-/**
- * Check arg is OriginalTableResults
- */
 export const isOriginalTableResults = function isArgOriginalTableResults(
   // deno-lint-ignore no-explicit-any
   arg: any,
@@ -289,12 +239,11 @@ export const isOriginalTableResults = function isArgOriginalTableResults(
     return false;
   }
 
-  // Check all rands is correct
   for (const rand of arg.rands) {
     if (!isDiceRoll(rand)) {
       return false;
     }
   }
 
-  return exceptedKeysJSON === actualKeysJSON && typeof arg.text === "string"; // Testing rands don't need.
+  return exceptedKeysJSON === actualKeysJSON && typeof arg.text === "string";
 };

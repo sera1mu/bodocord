@@ -1,12 +1,11 @@
 import ErrorEmbed from "./ErrorEmbed.ts";
 
 /**
- * Message Embed Object to display internal error information
+ * 内部エラーを表示するためのDiscordのEmbed
  */
 export default class InternalErrorEmbed extends ErrorEmbed {
   /**
-   * @param message Error message
-   * @param hash Error Hash (MD5)
+   * @param hash エラーハッシュ (MD5)
    */
   constructor(hash: string) {
     const message = `An error has occurred within the server.

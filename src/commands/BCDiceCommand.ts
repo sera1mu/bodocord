@@ -15,9 +15,6 @@ import BCDiceError from "../bcdice/BCDiceError.ts";
 import ErrorEmbed from "../discord/embeds/ErrorEmbed.ts";
 
 export default class BCDiceCommand extends Command {
-  /**
-   * BCDice-API Client
-   */
   private readonly bcdice: BCDiceAPIClient;
 
   constructor(bcdice: BCDiceAPIClient) {

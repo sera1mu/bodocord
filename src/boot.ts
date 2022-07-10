@@ -5,35 +5,34 @@ import { Config, getConfig } from "./util/configUtil.ts";
 import BCDiceAPIClient from "./bcdice/BCDiceAPIClient.ts";
 
 /**
- * Bodocord necessary environment variables
- *
- * BC_CONFIG -> Config file path
- *
- * BC_TOKEN -> Client token
+ * Bodocordが使用する環境変数
  */
 interface EnvironmentVariables {
+  /**
+   * 設定ファイルのパス
+   */
   BC_CONFIG: string;
+
+  /**
+   * 使用するBotのトークン
+   */
   BC_TOKEN: string;
 }
 
 /**
- * Get the necessary environment variables
+ * 必要な環境変数を取得する
  *
- * Requires `allow-env` for `BC_CONFIG` and `BC_TOKEN`
+ * Requires `allow-env`
  */
 const getEnv =
   function getNecessaryEnvironmentVariables(): EnvironmentVariables {
-    // Get BC_CONFIG
     const BC_CONFIG = Deno.env.get("BC_CONFIG");
-    // When BC_CONFIG is not string (undefined)
     if (typeof BC_CONFIG !== "string") {
-      // Throw error
       throw new Error(
         'Specify the config file path to environment variable "BC_CONFIG".',
       );
     }
 
-    // Get BC_TOKEN
     const BC_TOKEN = Deno.env.get("BC_TOKEN");
     if (typeof BC_TOKEN !== "string") {
       throw new Error(
@@ -48,8 +47,8 @@ const getEnv =
   };
 
 /**
- * Shutdown bot gracefully
- * @param client Bot client
+ * 正常にBotをシャットダウン
+ * @param client
  * @param systemLogger
  */
 const shutdown = function gracefullyShutdownBot(
@@ -58,7 +57,6 @@ const shutdown = function gracefullyShutdownBot(
 ): void {
   systemLogger.info("Shutting down...");
 
-  // Destroy client
   client.destroy()
     .then(() => systemLogger.info("Destroyed client."))
     .catch((err) => {
@@ -71,31 +69,18 @@ const shutdown = function gracefullyShutdownBot(
 };
 
 /**
- * Boot the bot
- * @returns System logger
+ * Botを起動する
  */
 const boot = async function bootBot(): Promise<
   { client: BodocordClient; config: Config; logger: pino.Logger }
 > {
-  // Get env
   const { BC_CONFIG, BC_TOKEN } = getEnv();
-
-  // Get config
   const config = getConfig(BC_CONFIG);
-
-  // Create logger
   const logger = pino(config.loggers["system"]);
-
-  // Create BCDice client
   const bcdiceClient = new BCDiceAPIClient(config.bcdiceAPIServer);
-
-  // Create client
   const client = new BodocordClient(bcdiceClient, config.loggers["client"]);
-
-  // Connect gateway
   await client.connect(BC_TOKEN, Intents.None);
 
-  // Add signal listeners (UNSTABLE)
   Deno.addSignalListener("SIGTERM", () => {
     shutdown(client, logger);
   });
@@ -121,6 +106,5 @@ performance.measure(
 const bootTimeResult = performance.getEntriesByName("boot")[0];
 const divisionMiliSeconds = 1000;
 
-// Log completed
 logger.info(`Done(${bootTimeResult.duration / divisionMiliSeconds} s)!`);
 logger.debug(bootTimeResult, "Boot measure result");

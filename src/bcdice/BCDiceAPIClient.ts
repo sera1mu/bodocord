@@ -16,9 +16,6 @@ import {
   OriginalTableResults,
 } from "./BCDiceAPITypes.ts";
 
-/**
- * BCDice-API Client
- */
 export default class BCDiceAPIClient {
   readonly prefixUrl: string | URL;
 
@@ -33,7 +30,9 @@ export default class BCDiceAPIClient {
   }
 
   /**
-   * Send GET request to specified URL and return JSON data
+   * 指定されたURLにGETリクエストを送信し、レスポンスをJSONとして返す
+   * 
+   * レスポンスがJSONである必要があります。
    */
   // deno-lint-ignore no-explicit-any
   private async getRequest(url: string, options?: Options): Promise<any> {
@@ -43,7 +42,7 @@ export default class BCDiceAPIClient {
   }
 
   /**
-   * Send POST request to specified URL and return JSON data
+   * 指定されたURLにPOSTリクエストを送信し、レスポンスをJSONとして返す
    */
   // deno-lint-ignore no-explicit-any
   private async postRequest(url: string, options?: Options): Promise<any> {
@@ -52,11 +51,7 @@ export default class BCDiceAPIClient {
     return json;
   }
 
-  /**
-   * Get BCDice-API version
-   */
   async getAPIVersion(): Promise<APIVersion> {
-    // Get data
     const json = await this.getRequest("v2/version")
       .catch((err) => {
         throw new BCDiceError(
@@ -68,7 +63,6 @@ export default class BCDiceAPIClient {
         );
       });
 
-    // Check JSON correctly
     if (!isAPIVersion(json)) {
       const causeError = new TypeError(
         `The syntax of the response is incorrect:\n${JSON.stringify(json)}`,
@@ -87,10 +81,9 @@ export default class BCDiceAPIClient {
   }
 
   /**
-   * Get BCDice-API administrator data
+   * BCDice-APIの管理者情報を取得する
    */
   async getAPIAdmin(): Promise<APIAdmin> {
-    // Get data
     const json = await this.getRequest("v2/admin")
       .catch((err) => {
         throw new BCDiceError(
@@ -102,7 +95,6 @@ export default class BCDiceAPIClient {
         );
       });
 
-    // Check JSON correctly
     if (!isAPIAdmin(json)) {
       const causeError = new TypeError(
         `The syntax of the response is incorrect:\n${JSON.stringify(json)}`,
@@ -118,9 +110,6 @@ export default class BCDiceAPIClient {
     return json;
   }
 
-  /**
-   * Get available game systems
-   */
   async getAvailableGameSystems(): Promise<AvailableGameSystem[]> {
     // Get data
     const json = await this.getRequest("v2/game_system")
@@ -134,10 +123,8 @@ export default class BCDiceAPIClient {
         );
       });
 
-    // Check JSON correctly
-    // Check game_system is not undefined
     if (typeof json.game_system !== "undefined") {
-      // Check all systems is corrrect
+      // すべてのゲームシステムが正しいことを確認
       for (const entry of json.game_system) {
         const newEntry = entry;
 
@@ -176,15 +163,12 @@ export default class BCDiceAPIClient {
   }
 
   /**
-   * Get specific game system
-   *
-   * @param id Game System ID
+   * 指定されたゲームシステムの情報を取得する
    */
   async getGameSystem(id: string): Promise<GameSystem> {
-    // Get data
     const json = await this.getRequest(`v2/game_system/${id}`)
       .catch((err) => {
-        // 400 Bad Request means game system unsupported
+        // 400 Bad Request はゲームシステムのIDが正しくないことを示している
         if (err instanceof HTTPError && err.response.status === 400) {
           throw new BCDiceError(
             "UNSUPPORTED_SYSTEM",
@@ -200,7 +184,6 @@ export default class BCDiceAPIClient {
         }
       });
 
-    // Remove `ok` property from JSON (It don't need)
     delete json.ok;
 
     if (typeof json.command_pattern === "undefined") {
@@ -217,7 +200,6 @@ export default class BCDiceAPIClient {
       );
     }
 
-    // Convert commandPattern to RegExp
     try {
       json.commandPattern = new RegExp(json.command_pattern);
     } catch (err) {
@@ -235,7 +217,6 @@ export default class BCDiceAPIClient {
     delete json.sort_key;
     delete json.help_message;
 
-    // Check JSON correctly
     if (!isGameSystem(json)) {
       const causeError = new TypeError(
         `The syntax of the response is incorrect:\n${JSON.stringify(json)}`,
@@ -252,21 +233,18 @@ export default class BCDiceAPIClient {
   }
 
   /**
-   * Roll the dice
-   * @param id Game System ID
-   * @param command Dice roll command
-   * @returns Results of dice roll
+   * ダイスを振る
+   * @param id ゲームシステムのID
+   * @param command ダイスロールのコマンド
    */
   async diceRoll(id: string, command: string): Promise<DiceRollResults> {
-    // Get data
     const json = await this.getRequest(`v2/game_system/${id}/roll`, {
       searchParams: {
         command,
       },
     }).catch(async (err) => {
-      // 400 Bad Request means command unsupported or game system unsupported
+      // 400 Bad Request はコマンドが正しくないか、ゲームシステムのIDが正しくないことを示している
       if (err instanceof HTTPError && err.response.status === 400) {
-        // Parse to JSON
         const json = await err.response.json();
 
         switch (json.reason) {
@@ -293,10 +271,8 @@ export default class BCDiceAPIClient {
       }
     });
 
-    // Remove `ok` property from JSON (It don't need)
     delete json.ok;
 
-    // Check JSON correctly
     if (!isDiceRollResults(json)) {
       const causeError = new TypeError(
         `The syntax of the response is incorrect:\n${JSON.stringify(json)}`,
@@ -315,17 +291,15 @@ export default class BCDiceAPIClient {
   async runOriginalTable(
     table: BCDiceOriginalTable,
   ): Promise<OriginalTableResults> {
-    // Parse to text
     const parsedTable = table.toBCDiceText();
 
-    // Get data
     const json = await this.postRequest("v2/original_table", {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: `table=${parsedTable}`,
     }).catch((err) => {
-      // 500 Internal Server Error means table is unsupported
+      // 500 Internal Server Error はテーブルが正しくないことを示している
       if (err instanceof HTTPError && err.response.status === 500) {
         throw new BCDiceError(
           "UNSUPPORTED_TABLE",
@@ -341,10 +315,8 @@ export default class BCDiceAPIClient {
       }
     });
 
-    // Remove `ok` property from JSON (It don't need)
     delete json.ok;
 
-    // Check JSON correctly
     if (!isOriginalTableResults(json)) {
       const causeError = new TypeError(
         `The syntax of the response is incorrect:\n${JSON.stringify(json)}`,
