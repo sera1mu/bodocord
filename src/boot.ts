@@ -60,14 +60,15 @@ const shutdown = function gracefullyShutdownBot(
   systemLogger.info("Shutting down...");
 
   client.destroy()
-    .then(() => systemLogger.info("Destroyed client."))
+    .then(() => {
+      systemLogger.info("Destroyed client.");
+      systemLogger.info("Exit code is 0.");
+    })
     .catch((err) => {
       systemLogger.error(err, "Failed to destroy client gracefully.");
       systemLogger.info("Exit code is 1.");
       Deno.exit(1);
     });
-
-  systemLogger.info("Exit code is 0.");
 };
 
 /**
