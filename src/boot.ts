@@ -114,4 +114,3 @@ const bootTimeResult = performance.getEntriesByName("boot")[0];
 const divisionMiliSeconds = 1000;
 
 logger.info(`Done(${bootTimeResult.duration / divisionMiliSeconds} s)!`);
-logger.debug(bootTimeResult, "Boot measure result");
