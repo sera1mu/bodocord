@@ -102,5 +102,6 @@ const startTime = performance.now();
 const { client, logger } = await boot();
 client.registerCommandPromise?.finally(() => {
   const endTime = performance.now();
-  logger.info(`Done(${endTime - startTime} ms)!`);
+  const divisionMiliseconds = 1000;
+  logger.info(`Done(${(endTime - startTime) / divisionMiliseconds} s)!`);
 });
