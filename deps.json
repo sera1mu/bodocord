@@ -1,6 +1,6 @@
 {
   "imports": {
-    "harmony": "https://deno.land/x/harmony@v2.3.0/mod.ts",
+    "harmony": "https://deno.land/x/harmony@v2.6.0/mod.ts",
     "pino": "https://esm.sh/pino@7.5.1",
     "ky": "https://cdn.skypack.dev/ky?dts",
     "std/testing/asserts": "https://deno.land/std@0.148.0/testing/asserts.ts",
