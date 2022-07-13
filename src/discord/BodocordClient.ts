@@ -1,4 +1,5 @@
 import {
+  ApplicationCommand,
   Client,
   ClientOptions,
   event,
@@ -22,6 +23,8 @@ interface Commands {
 }
 
 export default class BodocordClient extends Client {
+  registerCommandPromise?: Promise<void>;
+
   readonly commands: Commands;
 
   private readonly bcdiceClient: BCDiceAPIClient;
@@ -51,25 +54,18 @@ export default class BodocordClient extends Client {
   /**
    * プロパティ `commands` にあるコマンドを登録
    */
-  private registerCommands() {
-    for (const key of Object.keys(this.commands)) {
-      const command = this.commands[key];
+  private registerCommands(): Promise<ApplicationCommand[]> {
+    const promises: Promise<ApplicationCommand>[] = [];
 
-      this.interactions.commands.create(
-        command.commandPartial,
-      )
-        .then((cmd) => this.logger.info(`Created command ${cmd.name}.`))
-        .catch((err) =>
-          this.logger.error(
-            err,
-            `Failed to create command ${command.commandPartial.name}`,
-          )
-        );
-    }
+    Object.keys(this.commands).forEach(key => {
+      const command = this.commands[key];
+      promises.push(this.interactions.commands.create(command.commandPartial));
+    });
+
+    return Promise.all(promises);
   }
 
   private async runCommand(command: Command, i: Interaction): Promise<void> {
-    // Check run method is undefined
     if (typeof command.run !== "undefined") {
       try {
         await command.run(i);
@@ -126,8 +122,16 @@ export default class BodocordClient extends Client {
   @event()
   ready(): void {
     this.logger.info("Registering commands...");
-    this.registerCommands();
-    this.logger.info(`Ready! Logged in as ${this.user?.tag}(${this.user?.id})`);
+    this.registerCommandPromise = this.registerCommands()
+      .then((commands) => {
+        this.logger.info(`Registered all commands: ${commands.map(command => command.name).join(", ")}`);
+      })
+      .catch((err) => {
+        this.logger.error(`Failed to create command: ${err}`);
+      })
+      .finally(() => {
+        this.logger.info(`Ready! Logged in as ${this.user?.tag}(${this.user?.id})`);
+      });
   }
 
   @slash()

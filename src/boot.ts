@@ -98,19 +98,9 @@ const boot = async function bootBot(): Promise<
   return { client, config, logger };
 };
 
-// Measure boot time
-performance.mark("bootStart");
-const { logger } = await boot();
-performance.mark("bootEnd");
-
-performance.measure(
-  "boot",
-  "bootStart",
-  "bootEnd",
-);
-
-// Get boot time result
-const bootTimeResult = performance.getEntriesByName("boot")[0];
-const divisionMiliSeconds = 1000;
-
-logger.info(`Done(${bootTimeResult.duration / divisionMiliSeconds} s)!`);
+const startTime = performance.now();
+const { client, logger } = await boot();
+client.registerCommandPromise?.finally(() => {
+  const endTime = performance.now();
+  logger.info(`Done(${endTime - startTime} ms)!`);
+});
