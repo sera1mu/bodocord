@@ -4,6 +4,8 @@ import BodocordClient from "./discord/BodocordClient.ts";
 import { Config, getConfig } from "./util/configUtil.ts";
 import BCDiceAPIClient from "./bcdice/BCDiceAPIClient.ts";
 
+let isAlreadyStartedShutdown = false;
+
 /**
  * Bodocordが使用する環境変数
  */
@@ -82,9 +84,13 @@ const boot = async function bootBot(): Promise<
   await client.connect(BC_TOKEN, Intents.None);
 
   Deno.addSignalListener("SIGTERM", () => {
+    if(isAlreadyStartedShutdown) return;
+    isAlreadyStartedShutdown = true;
     shutdown(client, logger);
   });
   Deno.addSignalListener("SIGINT", () => {
+    if(isAlreadyStartedShutdown) return;
+    isAlreadyStartedShutdown = true;
     shutdown(client, logger);
   });
 
