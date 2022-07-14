@@ -4,6 +4,7 @@
     "pino": "https://esm.sh/pino@7.5.1",
     "ky": "https://cdn.skypack.dev/ky?dts",
     "std/testing/asserts": "https://deno.land/std@0.148.0/testing/asserts.ts",
-    "std/crypto": "https://deno.land/std@0.148.0/crypto/mod.ts"
+    "std/crypto": "https://deno.land/std@0.148.0/crypto/mod.ts",
+    "std/log": "https://deno.land/std@0.148.0/log/mod.ts"
   }
 }

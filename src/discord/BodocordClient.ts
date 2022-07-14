@@ -7,7 +7,7 @@ import {
   InteractionResponseType,
   slash,
 } from "harmony";
-import pino from "pino";
+import { Logger } from "std/log";
 import BCDiceCommand from "../commands/BCDiceCommand.ts";
 import DiceCommand from "../commands/DiceCommand.ts";
 import LinuxCommand from "../commands/LinuxCommand.ts";
@@ -29,7 +29,7 @@ export default class BodocordClient extends Client {
 
   private readonly bcdiceClient: BCDiceAPIClient;
 
-  private readonly logger: pino.Logger;
+  private readonly logger: Logger;
 
   /**
    * @param loggerOptionsOrStream Pino logger
@@ -37,13 +37,13 @@ export default class BodocordClient extends Client {
    */
   constructor(
     bcdiceClient: BCDiceAPIClient,
-    loggerOptionsOrStream?: pino.LoggerOptions | pino.DestinationStream,
+    logger: Logger,
     options?: ClientOptions,
   ) {
     super(options);
 
     this.bcdiceClient = bcdiceClient;
-    this.logger = pino(loggerOptionsOrStream);
+    this.logger = logger;
     this.commands = {
       linux: new LinuxCommand(),
       dice: new DiceCommand(bcdiceClient),
@@ -69,52 +69,24 @@ export default class BodocordClient extends Client {
     if (typeof command.run !== "undefined") {
       try {
         await command.run(i);
-        this.logger.info({
-          userId: i.user?.id,
-          guildId: i.guild?.id,
-          channelId: i.channel?.id,
-          interactionId: i.id,
-        }, `Runned command ${command.commandPartial.name}.`);
+        this.logger.info(`Runned command ${command.commandPartial.name}.`, `userId=${i.user?.id}`, `guildId=${i.guild?.id}`, `channelId=${i.channel?.id}`, `interactionId=${i.id}`);
       } catch (err) {
         if (err instanceof CommandError) {
           this.logger.error(
-            {
-              userId: i.user?.id,
-              guildId: i.guild?.id,
-              channelId: i.channel?.id,
-              interactionId: i.id,
-              hash: err.hash,
-              err,
-            },
-            `Failed to run command ${command.commandPartial.name}.`,
+            `Failed to run command ${command.commandPartial.name}.`, `userId=${i.user?.id}`, `guildId=${i.guild?.id}`, `channelId=${i.channel?.id}`, `interactionId=${i.id}`, err
           );
         } else {
           this.logger.error(
-            {
-              userId: i.user?.id,
-              guildId: i.guild?.id,
-              channelId: i.channel?.id,
-              interactionId: i.id,
-              hash: undefined,
-              err,
-            },
-            `Failed to run command ${command.commandPartial.name}.`,
+            `Failed to run command ${command.commandPartial.name}.`, `userId=${i.user?.id}`, `guildId=${i.guild?.id}`, `channelId=${i.channel?.id}`, `interactionId=${i.id}`, err
           );
         }
       }
     } else {
-      // Response run method is undefined
       i.respond({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         content: "Sorry. This command cannot use now.",
       }).then(() => {
-        this.logger.error({
-          userId: i.user?.id,
-          guildId: i.guild?.id,
-          channelId: i.channel?.id,
-          interactionId: i.id,
-          hash: undefined,
-        }, "The command run method is undefined.");
+        this.logger.error("The command run method is undefined.", `userId=${i.user?.id}`, `guildId=${i.guild?.id}`, `channelId=${i.channel?.id}`, `interactionId=${i.id}`, `hash=undefined`);
       });
     }
   }

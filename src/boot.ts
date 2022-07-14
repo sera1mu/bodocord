@@ -1,5 +1,5 @@
-import pino from "pino";
 import { Intents } from "harmony";
+import * as log from "std/log";
 import BodocordClient from "./discord/BodocordClient.ts";
 import { Config, getConfig } from "./util/configUtil.ts";
 import BCDiceAPIClient from "./bcdice/BCDiceAPIClient.ts";
@@ -50,23 +50,21 @@ const getEnv =
 
 /**
  * 正常にBotをシャットダウン
- * @param client
- * @param systemLogger
  */
 const shutdown = function gracefullyShutdownBot(
   client: BodocordClient,
-  systemLogger: pino.Logger,
+  logger: log.Logger,
 ): void {
-  systemLogger.info("Shutting down...");
+  logger.info("Shutting down...");
 
   client.destroy()
     .then(() => {
-      systemLogger.info("Destroyed client.");
-      systemLogger.info("Exit code is 0.");
+      logger.info("Destroyed client.");
+      logger.info("Exit code is 0.");
     })
     .catch((err) => {
-      systemLogger.error(err, "Failed to destroy client gracefully.");
-      systemLogger.info("Exit code is 1.");
+      logger.error("Failed to destroy client gracefully.", `err=${err}`);
+      logger.info("Exit code is 1.");
       Deno.exit(1);
     });
 };
@@ -75,13 +73,37 @@ const shutdown = function gracefullyShutdownBot(
  * Botを起動する
  */
 const boot = async function bootBot(): Promise<
-  { client: BodocordClient; config: Config; logger: pino.Logger }
+  { client: BodocordClient; config: Config; logger: log.Logger }
 > {
   const { BC_CONFIG, BC_TOKEN } = getEnv();
   const config = getConfig(BC_CONFIG);
-  const logger = pino(config.loggers["system"]);
+
+  await log.setup({
+    handlers: {
+      console: new log.handlers.ConsoleHandler("INFO", {
+        formatter: (logRecord) => {
+          const datetime = `${logRecord.datetime.getFullYear()}/${logRecord.datetime.getMonth()}/${logRecord.datetime.getDate()} ${logRecord.datetime.getHours().toString().padStart(2, '0')}:${logRecord.datetime.getMinutes().toString().padStart(2, '0')}:${logRecord.datetime.getSeconds()}`;
+          const output = `[${datetime}] [${logRecord.loggerName}/${logRecord.levelName}]${logRecord.args.length !== 0 ? " " + logRecord.args.join(",") : ""}: ${logRecord.msg}`;
+
+          return output;
+        }
+      })
+    },
+    loggers: {
+      default: {
+        level: "INFO",
+        handlers: ["console"]
+      },
+      client: {
+        level: "INFO",
+        handlers: ["console"]
+      }
+    }
+  });
+
+  const logger = log.getLogger();
   const bcdiceClient = new BCDiceAPIClient(config.bcdiceAPIServer);
-  const client = new BodocordClient(bcdiceClient, config.loggers["client"]);
+  const client = new BodocordClient(bcdiceClient, log.getLogger("client"));
   await client.connect(BC_TOKEN, Intents.None);
 
   Deno.addSignalListener("SIGTERM", () => {
