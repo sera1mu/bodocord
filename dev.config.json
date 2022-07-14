@@ -1,13 +1,3 @@
 {
-  "loggers": {
-    "system": {
-      "name": "system",
-      "level": "debug"
-    },
-    "client": {
-      "name": "client",
-      "level": "debug"
-    }
-  },
   "bcdiceAPIServer": "https://bcdice.onlinesession.app"
 }
