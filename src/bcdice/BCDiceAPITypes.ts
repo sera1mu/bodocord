@@ -10,7 +10,7 @@ export interface APIVersion {
   bcdice: string;
 }
 
-export const isAPIVersion = function isArgAPIVersion(
+export function isAPIVersion(
   // deno-lint-ignore no-explicit-any
   arg: any,
 ): arg is APIVersion {
@@ -19,7 +19,7 @@ export const isAPIVersion = function isArgAPIVersion(
 
   return exceptedKeysJSON === actualKeysJSON &&
     typeof arg.api === "string" && typeof arg.bcdice === "string";
-};
+}
 
 /**
  * BCDice-API の管理者情報
@@ -42,14 +42,14 @@ export interface APIAdmin {
 }
 
 // deno-lint-ignore no-explicit-any
-export const isAPIAdmin = function isArgAPIVersion(arg: any): arg is APIAdmin {
+export function isAPIAdmin(arg: any): arg is APIAdmin {
   const exceptedKeysJSON = JSON.stringify(["email", "name", "url"]);
   const actualKeysJSON = JSON.stringify(Object.keys(arg).sort());
 
   return exceptedKeysJSON === actualKeysJSON &&
     typeof arg.name === "string" && typeof arg.url === "string" &&
     typeof arg.email === "string";
-};
+}
 
 export interface AvailableGameSystem {
   id: string;
@@ -62,7 +62,7 @@ export interface AvailableGameSystem {
   sortKey: string;
 }
 
-export const isAvailableGameSystem = function isArgAvailableGameSystem(
+export function isAvailableGameSystem(
   // deno-lint-ignore no-explicit-any
   arg: any,
 ): arg is AvailableGameSystem {
@@ -72,7 +72,7 @@ export const isAvailableGameSystem = function isArgAvailableGameSystem(
   return exceptedKeysJSON === actualKeysJSON &&
     typeof arg.id === "string" && typeof arg.name === "string" &&
     typeof arg.sortKey === "string";
-};
+}
 
 export interface GameSystem {
   id: string;
@@ -95,7 +95,7 @@ export interface GameSystem {
   helpMessage: string;
 }
 
-export const isGameSystem = function isArgGameSystem(
+export function isGameSystem(
   // deno-lint-ignore no-explicit-any
   arg: any,
 ): arg is GameSystem {
@@ -111,7 +111,7 @@ export const isGameSystem = function isArgGameSystem(
   return exceptedKeysJSON === actualKeysJSON &&
     typeof arg.id === "string" && typeof arg.name === "string" &&
     typeof arg.sortKey === "string" && arg.commandPattern instanceof RegExp;
-};
+}
 
 export interface DiceRoll {
   /**
@@ -131,7 +131,7 @@ export interface DiceRoll {
 }
 
 // deno-lint-ignore no-explicit-any
-export const isDiceRoll = function isArgDiceRoll(arg: any): arg is DiceRoll {
+export function isDiceRoll(arg: any): arg is DiceRoll {
   const exceptedKeysJSON = JSON.stringify([
     "kind",
     "sides",
@@ -143,7 +143,7 @@ export const isDiceRoll = function isArgDiceRoll(arg: any): arg is DiceRoll {
 
   return exceptedKeysJSON === actualKeysJSON && isKindCorrect &&
     typeof arg.sides === "number" && typeof arg.value === "number";
-};
+}
 
 export interface DiceRollResults {
   /**
@@ -182,7 +182,7 @@ export interface DiceRollResults {
   rands: DiceRoll[];
 }
 
-export const isDiceRollResults = function isArgDiceRollResults(
+export function isDiceRollResults(
   // deno-lint-ignore no-explicit-any
   arg: any,
 ): arg is DiceRollResults {
@@ -211,7 +211,7 @@ export const isDiceRollResults = function isArgDiceRollResults(
     typeof arg.secret === "boolean" && typeof arg.success === "boolean" &&
     typeof arg.failure === "boolean" && typeof arg.critical === "boolean" &&
     typeof arg.fumble === "boolean";
-};
+}
 
 export interface OriginalTableResults {
   /**
@@ -225,7 +225,7 @@ export interface OriginalTableResults {
   rands: DiceRoll[];
 }
 
-export const isOriginalTableResults = function isArgOriginalTableResults(
+export function isOriginalTableResults(
   // deno-lint-ignore no-explicit-any
   arg: any,
 ): arg is OriginalTableResults {
@@ -246,4 +246,4 @@ export const isOriginalTableResults = function isArgOriginalTableResults(
   }
 
   return exceptedKeysJSON === actualKeysJSON && typeof arg.text === "string";
-};
+}

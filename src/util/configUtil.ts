@@ -10,11 +10,11 @@ export interface Config {
  *
  * Requires `allow-read`
  */
-export const getConfig = function getConfigFromJSONFile(
+export function getConfig(
   path: string,
 ): Config {
   const rawConfig = Deno.readTextFileSync(path);
   const parsedConfig = JSON.parse(rawConfig);
 
   return parsedConfig;
-};
+}

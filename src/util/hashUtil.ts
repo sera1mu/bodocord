@@ -4,7 +4,7 @@ import { Interaction } from "harmony";
 /**
  * テキストからMD5ハッシュを生成する
  */
-export const generateHash = async function generateHashWithMD5ConvertHEXString(
+export async function generateMD5Hash(
   text: string,
 ) {
   const encodedText = new TextEncoder().encode(text); // Encode text
@@ -15,18 +15,17 @@ export const generateHash = async function generateHashWithMD5ConvertHEXString(
   ); // Convert bytes to HEX string
 
   return hashHex;
-};
+}
 
 /**
  * HarmonyのInteractionからMD5ハッシュを生成する
  *
  * ログからエラーを簡単に検索するために使用されます。
  */
-export const generateInteractionErrorHash =
-  async function generateErrorHashFromInteractionInformation(i: Interaction) {
-    const text = `t:${i.timestamp.toString},g:${i.guild?.id},c:${i.channel
-      ?.id},i:${i.id}`; // t = timestamp, g = guild id, c = channel id, i = interaction id
-    const hash = await generateHash(text);
+export async function generateInteractionErrorHash(i: Interaction) {
+  const text = `t:${i.timestamp.toString},g:${i.guild?.id},c:${i.channel
+    ?.id},i:${i.id}`; // t = timestamp, g = guild id, c = channel id, i = interaction id
+  const hash = await generateMD5Hash(text);
 
-    return hash;
-  };
+  return hash;
+}

@@ -26,32 +26,31 @@ interface EnvironmentVariables {
  *
  * Requires `allow-env`
  */
-const getEnv =
-  function getNecessaryEnvironmentVariables(): EnvironmentVariables {
-    const BC_CONFIG = Deno.env.get("BC_CONFIG");
-    if (typeof BC_CONFIG !== "string") {
-      throw new Error(
-        'Specify the config file path to environment variable "BC_CONFIG".',
-      );
-    }
+function getEnv(): EnvironmentVariables {
+  const BC_CONFIG = Deno.env.get("BC_CONFIG");
+  if (typeof BC_CONFIG !== "string") {
+    throw new Error(
+      'Specify the config file path to environment variable "BC_CONFIG".',
+    );
+  }
 
-    const BC_TOKEN = Deno.env.get("BC_TOKEN");
-    if (typeof BC_TOKEN !== "string") {
-      throw new Error(
-        'Specify the client\'s token to environment variable "BC_TOKEN".',
-      );
-    }
+  const BC_TOKEN = Deno.env.get("BC_TOKEN");
+  if (typeof BC_TOKEN !== "string") {
+    throw new Error(
+      'Specify the client\'s token to environment variable "BC_TOKEN".',
+    );
+  }
 
-    return {
-      BC_CONFIG,
-      BC_TOKEN,
-    };
+  return {
+    BC_CONFIG,
+    BC_TOKEN,
   };
+}
 
 /**
  * 正常にBotをシャットダウン
  */
-const shutdown = function gracefullyShutdownBot(
+function shutdown(
   client: BodocordClient,
   logger: log.Logger,
 ): void {
@@ -67,12 +66,12 @@ const shutdown = function gracefullyShutdownBot(
       logger.info("Exit code is 1.");
       Deno.exit(1);
     });
-};
+}
 
 /**
  * Botを起動する
  */
-const boot = async function bootBot(): Promise<
+async function boot(): Promise<
   { client: BodocordClient; config: Config; logger: log.Logger }
 > {
   const { BC_CONFIG, BC_TOKEN } = getEnv();
@@ -127,7 +126,7 @@ const boot = async function bootBot(): Promise<
   });
 
   return { client, config, logger };
-};
+}
 
 const startTime = performance.now();
 const { client, logger } = await boot();
