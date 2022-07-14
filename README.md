@@ -31,18 +31,7 @@ Create a JSON file as appropriate.
 ```jsonc
 // Example config
 {
-  "loggers": { // Loggers settings
-    "system": { // System logger
-      "name": "system",
-      "level": "info"
-    },
-    "client": { // Discord Client logger
-      "name": "client",
-      "level": "warn"
-    },
-    // See https://getpino.io/#/docs/api?id=options
-    "bcdiceAPIServer": "https://bcdice.onlinesession.app"
-  }
+  "bcdiceAPIServer": "https://bcdice.onlinesession.app"
 }
 ```
 
@@ -56,13 +45,13 @@ BC_TOKEN=YOUR_BOT_TOKEN
 4. Cache modules
 
 ```
-deno cache --no-check=remote --unstable --import-map deps.json src/boot.ts
+deno cache --unstable src/boot.ts
 ```
 
 5. Start
 
 ```
-denon start
+deno task start
 ```
 
 ## Usage
