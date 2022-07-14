@@ -1,5 +1,8 @@
 # Bodocord
 
+![Codecov coverage (main)](https://img.shields.io/codecov/c/github/sera1mu/bodocord/main?label=coverage%20%28main%29&logo=codecov&style=flat-square)
+![Codecov coverage (develop)](https://img.shields.io/codecov/c/github/sera1mu/bodocord/develop?label=coverage%20%28develop%29&logo=codecov&style=flat-square)
+
 **This is WIP project. We don't recommend use in production.**
 
 Bodocord is a Discord bot to playing board games on Discord.
