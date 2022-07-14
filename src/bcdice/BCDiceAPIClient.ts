@@ -31,7 +31,7 @@ export default class BCDiceAPIClient {
 
   /**
    * 指定されたURLにGETリクエストを送信し、レスポンスをJSONとして返す
-   * 
+   *
    * レスポンスがJSONである必要があります。
    */
   // deno-lint-ignore no-explicit-any

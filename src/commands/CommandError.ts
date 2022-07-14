@@ -1,7 +1,7 @@
 export default class CommandError extends Error {
   /**
    * エラーハッシュ (MD5)
-   * 
+   *
    * エラーを簡単にログから検索するために使用されます。
    */
   readonly hash: string;

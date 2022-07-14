@@ -57,7 +57,7 @@ export default class BodocordClient extends Client {
   private registerCommands(): Promise<ApplicationCommand[]> {
     const promises: Promise<ApplicationCommand>[] = [];
 
-    Object.keys(this.commands).forEach(key => {
+    Object.keys(this.commands).forEach((key) => {
       const command = this.commands[key];
       promises.push(this.interactions.commands.create(command.commandPartial));
     });
@@ -69,15 +69,31 @@ export default class BodocordClient extends Client {
     if (typeof command.run !== "undefined") {
       try {
         await command.run(i);
-        this.logger.info(`Runned command ${command.commandPartial.name}.`, `userId=${i.user?.id}`, `guildId=${i.guild?.id}`, `channelId=${i.channel?.id}`, `interactionId=${i.id}`);
+        this.logger.info(
+          `Runned command ${command.commandPartial.name}.`,
+          `userId=${i.user?.id}`,
+          `guildId=${i.guild?.id}`,
+          `channelId=${i.channel?.id}`,
+          `interactionId=${i.id}`,
+        );
       } catch (err) {
         if (err instanceof CommandError) {
           this.logger.error(
-            `Failed to run command ${command.commandPartial.name}.`, `userId=${i.user?.id}`, `guildId=${i.guild?.id}`, `channelId=${i.channel?.id}`, `interactionId=${i.id}`, err
+            `Failed to run command ${command.commandPartial.name}.`,
+            `userId=${i.user?.id}`,
+            `guildId=${i.guild?.id}`,
+            `channelId=${i.channel?.id}`,
+            `interactionId=${i.id}`,
+            err,
           );
         } else {
           this.logger.error(
-            `Failed to run command ${command.commandPartial.name}.`, `userId=${i.user?.id}`, `guildId=${i.guild?.id}`, `channelId=${i.channel?.id}`, `interactionId=${i.id}`, err
+            `Failed to run command ${command.commandPartial.name}.`,
+            `userId=${i.user?.id}`,
+            `guildId=${i.guild?.id}`,
+            `channelId=${i.channel?.id}`,
+            `interactionId=${i.id}`,
+            err,
           );
         }
       }
@@ -86,7 +102,14 @@ export default class BodocordClient extends Client {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         content: "Sorry. This command cannot use now.",
       }).then(() => {
-        this.logger.error("The command run method is undefined.", `userId=${i.user?.id}`, `guildId=${i.guild?.id}`, `channelId=${i.channel?.id}`, `interactionId=${i.id}`, `hash=undefined`);
+        this.logger.error(
+          "The command run method is undefined.",
+          `userId=${i.user?.id}`,
+          `guildId=${i.guild?.id}`,
+          `channelId=${i.channel?.id}`,
+          `interactionId=${i.id}`,
+          `hash=undefined`,
+        );
       });
     }
   }
@@ -96,13 +119,19 @@ export default class BodocordClient extends Client {
     this.logger.info("Registering commands...");
     this.registerCommandPromise = this.registerCommands()
       .then((commands) => {
-        this.logger.info(`Registered all commands: ${commands.map(command => command.name).join(", ")}`);
+        this.logger.info(
+          `Registered all commands: ${
+            commands.map((command) => command.name).join(", ")
+          }`,
+        );
       })
       .catch((err) => {
         this.logger.error(`Failed to create command: ${err}`);
       })
       .finally(() => {
-        this.logger.info(`Ready! Logged in as ${this.user?.tag}(${this.user?.id})`);
+        this.logger.info(
+          `Ready! Logged in as ${this.user?.tag}(${this.user?.id})`,
+        );
       });
   }
 

@@ -82,23 +82,31 @@ const boot = async function bootBot(): Promise<
     handlers: {
       console: new log.handlers.ConsoleHandler("INFO", {
         formatter: (logRecord) => {
-          const datetime = `${logRecord.datetime.getFullYear()}/${logRecord.datetime.getMonth()}/${logRecord.datetime.getDate()} ${logRecord.datetime.getHours().toString().padStart(2, '0')}:${logRecord.datetime.getMinutes().toString().padStart(2, '0')}:${logRecord.datetime.getSeconds()}`;
-          const output = `[${datetime}] [${logRecord.loggerName}/${logRecord.levelName}]${logRecord.args.length !== 0 ? " " + logRecord.args.join(",") : ""}: ${logRecord.msg}`;
+          const datetime =
+            `${logRecord.datetime.getFullYear()}/${logRecord.datetime.getMonth()}/${logRecord.datetime.getDate()} ${
+              logRecord.datetime.getHours().toString().padStart(2, "0")
+            }:${
+              logRecord.datetime.getMinutes().toString().padStart(2, "0")
+            }:${logRecord.datetime.getSeconds()}`;
+          const output =
+            `[${datetime}] [${logRecord.loggerName}/${logRecord.levelName}]${
+              logRecord.args.length !== 0 ? " " + logRecord.args.join(",") : ""
+            }: ${logRecord.msg}`;
 
           return output;
-        }
-      })
+        },
+      }),
     },
     loggers: {
       default: {
         level: "INFO",
-        handlers: ["console"]
+        handlers: ["console"],
       },
       client: {
         level: "INFO",
-        handlers: ["console"]
-      }
-    }
+        handlers: ["console"],
+      },
+    },
   });
 
   const logger = log.getLogger();
@@ -107,12 +115,12 @@ const boot = async function bootBot(): Promise<
   await client.connect(BC_TOKEN, Intents.None);
 
   Deno.addSignalListener("SIGTERM", () => {
-    if(isAlreadyStartedShutdown) return;
+    if (isAlreadyStartedShutdown) return;
     isAlreadyStartedShutdown = true;
     shutdown(client, logger);
   });
   Deno.addSignalListener("SIGINT", () => {
-    if(isAlreadyStartedShutdown) return;
+    if (isAlreadyStartedShutdown) return;
     isAlreadyStartedShutdown = true;
     shutdown(client, logger);
   });

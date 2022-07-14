@@ -8,15 +8,15 @@ export default class ErrorEmbed extends Embed {
 
   /**
    * ハッシュ(MD5)
-   * 
+   *
    * エラーをログから簡単に見つけるための目印として使う
-   * 
+   *
    * util/hashUtil.ts にある 関数 `generateHash` を使って生成してください。
    */
   readonly hash: string;
 
   /**
-   * @param hash エラーハッシュ(MD5) 
+   * @param hash エラーハッシュ(MD5)
    */
   constructor(message: string, hash: string) {
     super({
@@ -32,4 +32,3 @@ export default class ErrorEmbed extends Embed {
     this.hash = hash;
   }
 }
-
