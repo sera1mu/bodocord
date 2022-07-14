@@ -82,12 +82,13 @@ const boot = async function bootBot(): Promise<
     handlers: {
       console: new log.handlers.ConsoleHandler("INFO", {
         formatter: (logRecord) => {
-          const datetime =
-            `${logRecord.datetime.getFullYear()}/${logRecord.datetime.getMonth()}/${logRecord.datetime.getDate()} ${
-              logRecord.datetime.getHours().toString().padStart(2, "0")
-            }:${
-              logRecord.datetime.getMinutes().toString().padStart(2, "0")
-            }:${logRecord.datetime.getSeconds()}`;
+          const datetime = `${logRecord.datetime.getFullYear()}/${
+            logRecord.datetime.getMonth().toString().padStart(2, "0")
+          }/${logRecord.datetime.getDate().toString().padStart(2, "0")} ${
+            logRecord.datetime.getHours().toString().padStart(2, "0")
+          }:${logRecord.datetime.getMinutes().toString().padStart(2, "0")}:${
+            logRecord.datetime.getSeconds().toString().padStart(2, "0")
+          }`;
           const output =
             `[${datetime}] [${logRecord.loggerName}/${logRecord.levelName}]${
               logRecord.args.length !== 0 ? " " + logRecord.args.join(",") : ""
