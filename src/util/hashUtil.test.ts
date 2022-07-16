@@ -1,6 +1,5 @@
 import { assertStrictEquals } from "std/testing/asserts";
 import { describe, it } from "std/testing/bdd";
-import { Interaction } from "harmony";
 import { generateMD5Hash } from "./hashUtil.ts";
 
 describe("hashUtil", () => {
