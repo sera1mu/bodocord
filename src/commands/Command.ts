@@ -4,7 +4,7 @@ import BodocordClient from "../discord/BodocordClient.ts";
 /**
  * Slash Commandの基底クラス
  */
-export default class Command {
+export default abstract class Command {
   readonly commandPartial: ApplicationCommandPartial;
 
   constructor(commandPartial: ApplicationCommandPartial) {
@@ -14,10 +14,10 @@ export default class Command {
   /**
    * クライアントがコマンドを初期化したときの処理
    */
-  init?(client: BodocordClient): void | Promise<void>;
+  abstract init(client: BodocordClient): void | Promise<void>;
 
   /**
    * コマンドが実行されたときの処理
    */
-  run?(i: Interaction): void | Promise<void>;
+  abstract run(i: Interaction): void | Promise<void>;
 }

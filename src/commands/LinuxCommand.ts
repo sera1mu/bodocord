@@ -10,6 +10,8 @@ export default class LinuxCommand extends Command {
     });
   }
 
+  init(): void {}
+
   async run(i: Interaction): Promise<void> {
     await i.respond({
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

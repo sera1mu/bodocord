@@ -272,6 +272,8 @@ export default class BCDiceCommand extends Command {
     });
   }
 
+  init(): void {}
+
   async run(i: Interaction): Promise<void> {
     const slashInteraction = i as SlashCommandInteraction;
 

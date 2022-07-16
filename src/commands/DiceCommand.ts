@@ -32,6 +32,8 @@ export default class DiceCommand extends Command {
     this.bcdice = bcdice;
   }
 
+  init(): void {}
+
   async run(i: Interaction): Promise<void> {
     const slashInteraction = i as SlashCommandInteraction;
     const sides = slashInteraction.options.length !== 0
