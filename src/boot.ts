@@ -54,6 +54,9 @@ function shutdown(
   client: BodocordClient,
   logger: log.Logger,
 ): void {
+  if (isAlreadyStartedShutdown) return;
+  isAlreadyStartedShutdown = true;
+
   logger.info("Shutting down...");
 
   client.destroy()
@@ -114,16 +117,8 @@ async function boot(): Promise<
   const client = new BodocordClient(bcdiceClient, log.getLogger("client"));
   await client.connect(BC_TOKEN, Intents.None);
 
-  Deno.addSignalListener("SIGTERM", () => {
-    if (isAlreadyStartedShutdown) return;
-    isAlreadyStartedShutdown = true;
-    shutdown(client, logger);
-  });
-  Deno.addSignalListener("SIGINT", () => {
-    if (isAlreadyStartedShutdown) return;
-    isAlreadyStartedShutdown = true;
-    shutdown(client, logger);
-  });
+  Deno.addSignalListener("SIGTERM", () => shutdown(client, logger));
+  Deno.addSignalListener("SIGINT", () => shutdown(client, logger));
 
   return { client, config, logger };
 }
