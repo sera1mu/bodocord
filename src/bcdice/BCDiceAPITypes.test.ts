@@ -30,18 +30,20 @@ describe("BCDiceAPITypes", () => {
 
   it("isAPIAdmin", () => {
     const correct = {
-      api: "1.0.0",
-      bcdice: "1.0.0",
+      name: "example-name",
+      url: "example-url",
+      email: "example@mail.com",
     };
 
     const incorrects = [{}, {
-      api: 0,
-      bcdice: 1,
+      name: 0,
+      url: 1,
+      email: 2,
     }];
 
-    assert(isAPIVersion(correct));
+    assert(isAPIAdmin(correct));
     for (const entry of incorrects) {
-      assert(!(isAPIVersion(entry)));
+      assert(!(isAPIAdmin(entry)));
     }
   });
 
