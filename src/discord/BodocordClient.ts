@@ -27,14 +27,8 @@ export default class BodocordClient extends Client {
 
   readonly commands: Commands;
 
-  private readonly bcdiceClient: BCDiceAPIClient;
-
   private readonly logger: Logger;
 
-  /**
-   * @param loggerOptionsOrStream Pino logger
-   * @param options
-   */
   constructor(
     bcdiceClient: BCDiceAPIClient,
     logger: Logger,
@@ -42,7 +36,6 @@ export default class BodocordClient extends Client {
   ) {
     super(options);
 
-    this.bcdiceClient = bcdiceClient;
     this.logger = logger;
     this.commands = {
       linux: new LinuxCommand(),
