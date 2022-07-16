@@ -3,6 +3,7 @@
     "harmony": "https://deno.land/x/harmony@v2.6.0/mod.ts",
     "ky": "https://cdn.skypack.dev/ky?dts",
     "std/testing/asserts": "https://deno.land/std@0.148.0/testing/asserts.ts",
+    "std/testing/bdd": "https://deno.land/std@0.148.0/testing/bdd.ts",
     "std/crypto": "https://deno.land/std@0.148.0/crypto/mod.ts",
     "std/log": "https://deno.land/std@0.148.0/log/mod.ts"
   }
