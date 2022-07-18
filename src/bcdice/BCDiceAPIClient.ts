@@ -1,4 +1,4 @@
-import { default as ky, HTTPError, Options } from "ky";
+import { HTTPError } from "ky";
 import BCDiceOriginalTable from "./BCDiceOriginalTable.ts";
 import BCDiceError from "./BCDiceError.ts";
 import {
@@ -15,44 +15,17 @@ import {
   isOriginalTableResults,
   OriginalTableResults,
 } from "./BCDiceAPITypes.ts";
+import SimpleKyClient from "./SimpleKyClient.ts";
 
 export default class BCDiceAPIClient {
-  readonly prefixUrl: string | URL;
+  private readonly kyClient: SimpleKyClient;
 
-  private readonly kyClient: ReturnType<typeof ky.create>;
-
-  constructor(prefixUrl: string | URL) {
-    this.prefixUrl = prefixUrl;
-
-    this.kyClient = ky.create({
-      prefixUrl,
-    });
-  }
-
-  /**
-   * 指定されたURLにGETリクエストを送信し、レスポンスをJSONとして返す
-   *
-   * レスポンスがJSONである必要があります。
-   */
-  // deno-lint-ignore no-explicit-any
-  private async getRequest(url: string, options?: Options): Promise<any> {
-    const res = await this.kyClient.get(url, options);
-    const json = await res.json();
-    return json;
-  }
-
-  /**
-   * 指定されたURLにPOSTリクエストを送信し、レスポンスをJSONとして返す
-   */
-  // deno-lint-ignore no-explicit-any
-  private async postRequest(url: string, options?: Options): Promise<any> {
-    const res = await this.kyClient.post(url, options);
-    const json = await res.json();
-    return json;
+  constructor(kyClient: SimpleKyClient) {
+    this.kyClient = kyClient;
   }
 
   async getAPIVersion(): Promise<APIVersion> {
-    const json = await this.getRequest("v2/version")
+    const json = await this.kyClient.get("v2/version")
       .catch((err) => {
         throw new BCDiceError(
           "CONNECTION_ERROR",
@@ -84,7 +57,7 @@ export default class BCDiceAPIClient {
    * BCDice-APIの管理者情報を取得する
    */
   async getAPIAdmin(): Promise<APIAdmin> {
-    const json = await this.getRequest("v2/admin")
+    const json = await this.kyClient.get("v2/admin")
       .catch((err) => {
         throw new BCDiceError(
           "CONNECTION_ERROR",
@@ -112,7 +85,7 @@ export default class BCDiceAPIClient {
 
   async getAvailableGameSystems(): Promise<AvailableGameSystem[]> {
     // Get data
-    const json = await this.getRequest("v2/game_system")
+    const json = await this.kyClient.get("v2/game_system")
       .catch((err) => {
         throw new BCDiceError(
           "CONNECTION_ERROR",
@@ -166,7 +139,7 @@ export default class BCDiceAPIClient {
    * 指定されたゲームシステムの情報を取得する
    */
   async getGameSystem(id: string): Promise<GameSystem> {
-    const json = await this.getRequest(`v2/game_system/${id}`)
+    const json = await this.kyClient.get(`v2/game_system/${id}`)
       .catch((err) => {
         // 400 Bad Request はゲームシステムのIDが正しくないことを示している
         if (err instanceof HTTPError && err.response.status === 400) {
@@ -238,7 +211,7 @@ export default class BCDiceAPIClient {
    * @param command ダイスロールのコマンド
    */
   async diceRoll(id: string, command: string): Promise<DiceRollResults> {
-    const json = await this.getRequest(`v2/game_system/${id}/roll`, {
+    const json = await this.kyClient.get(`v2/game_system/${id}/roll`, {
       searchParams: {
         command,
       },
@@ -293,7 +266,7 @@ export default class BCDiceAPIClient {
   ): Promise<OriginalTableResults> {
     const parsedTable = table.toBCDiceText();
 
-    const json = await this.postRequest("v2/original_table", {
+    const json = await this.kyClient.post("v2/original_table", {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },

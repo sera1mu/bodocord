@@ -3,6 +3,7 @@ import * as log from "std/log";
 import BodocordClient from "./discord/BodocordClient.ts";
 import { Config, getConfig } from "./util/configUtil.ts";
 import BCDiceAPIClient from "./bcdice/BCDiceAPIClient.ts";
+import SimpleKyClient from "./bcdice/SimpleKyClient.ts";
 
 let isAlreadyStartedShutdown = false;
 
@@ -113,7 +114,9 @@ async function boot(): Promise<
   });
 
   const logger = log.getLogger();
-  const bcdiceClient = new BCDiceAPIClient(config.bcdiceAPIServer);
+  const bcdiceClient = new BCDiceAPIClient(
+    new SimpleKyClient(config.bcdiceAPIServer),
+  );
   const client = new BodocordClient(bcdiceClient, log.getLogger("client"));
   await client.connect(BC_TOKEN, Intents.None);
 
