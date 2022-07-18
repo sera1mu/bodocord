@@ -18,14 +18,14 @@ import {
 import SimpleKyClient from "./SimpleKyClient.ts";
 
 export default class BCDiceAPIClient {
-  private readonly kyClient: SimpleKyClient;
+  private readonly webClient: SimpleKyClient;
 
-  constructor(kyClient: SimpleKyClient) {
-    this.kyClient = kyClient;
+  constructor(webClient: SimpleKyClient) {
+    this.webClient = webClient;
   }
 
   async getAPIVersion(): Promise<APIVersion> {
-    const json = await this.kyClient.get("v2/version")
+    const json = await this.webClient.get("v2/version")
       .catch((err) => {
         throw new BCDiceError(
           "CONNECTION_ERROR",
@@ -57,7 +57,7 @@ export default class BCDiceAPIClient {
    * BCDice-APIの管理者情報を取得する
    */
   async getAPIAdmin(): Promise<APIAdmin> {
-    const json = await this.kyClient.get("v2/admin")
+    const json = await this.webClient.get("v2/admin")
       .catch((err) => {
         throw new BCDiceError(
           "CONNECTION_ERROR",
@@ -85,7 +85,7 @@ export default class BCDiceAPIClient {
 
   async getAvailableGameSystems(): Promise<AvailableGameSystem[]> {
     // Get data
-    const json = await this.kyClient.get("v2/game_system")
+    const json = await this.webClient.get("v2/game_system")
       .catch((err) => {
         throw new BCDiceError(
           "CONNECTION_ERROR",
@@ -139,7 +139,7 @@ export default class BCDiceAPIClient {
    * 指定されたゲームシステムの情報を取得する
    */
   async getGameSystem(id: string): Promise<GameSystem> {
-    const json = await this.kyClient.get(`v2/game_system/${id}`)
+    const json = await this.webClient.get(`v2/game_system/${id}`)
       .catch((err) => {
         // 400 Bad Request はゲームシステムのIDが正しくないことを示している
         if (err instanceof HTTPError && err.response.status === 400) {
@@ -211,7 +211,7 @@ export default class BCDiceAPIClient {
    * @param command ダイスロールのコマンド
    */
   async diceRoll(id: string, command: string): Promise<DiceRollResults> {
-    const json = await this.kyClient.get(`v2/game_system/${id}/roll`, {
+    const json = await this.webClient.get(`v2/game_system/${id}/roll`, {
       searchParams: {
         command,
       },
@@ -266,7 +266,7 @@ export default class BCDiceAPIClient {
   ): Promise<OriginalTableResults> {
     const parsedTable = table.toBCDiceText();
 
-    const json = await this.kyClient.post("v2/original_table", {
+    const json = await this.webClient.post("v2/original_table", {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
