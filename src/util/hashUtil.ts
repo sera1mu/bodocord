@@ -23,8 +23,8 @@ export async function generateMD5Hash(
  * ログからエラーを簡単に検索するために使用されます。
  */
 export async function generateInteractionErrorHash(i: Interaction) {
-  const text = `t:${i.timestamp.toString},g:${i.guild?.id},c:${i.channel
-    ?.id},i:${i.id}`; // t = timestamp, g = guild id, c = channel id, i = interaction id
+  const text =
+    `t:${i.timestamp.toString},g:${i.guild?.id},c:${i.channel?.id},i:${i.id}`; // t = timestamp, g = guild id, c = channel id, i = interaction id
   const hash = await generateMD5Hash(text);
 
   return hash;
