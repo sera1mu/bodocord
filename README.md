@@ -1,5 +1,6 @@
 # Bodocord
 
+![GitHub Workflow Status: Test](https://img.shields.io/github/workflow/status/sera1mu/bodocord/Test?label=Test&logo=github&style=flat-square)
 ![Codecov coverage](https://img.shields.io/codecov/c/github/sera1mu/bodocord/main?label=coverage&logo=codecov&style=flat-square)
 
 **This is WIP project. We don't recommend use in production.**
