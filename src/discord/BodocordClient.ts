@@ -58,52 +58,60 @@ export default class BodocordClient extends Client {
     return Promise.all(promises);
   }
 
+  private logCommandError(
+    i: Interaction,
+    message: string,
+    err?: CommandError | Error,
+  ) {
+    const args = [
+      `userId=${i.user?.id}`,
+      `guildId=${i.guild?.id}`,
+      `channelId=${i.channel?.id}`,
+      `interactionId=${i.id}`,
+      `err=${err?.message}`,
+    ];
+
+    if (err instanceof CommandError) args.push(`hash=${err.hash}`);
+
+    this.logger.error(message, args);
+  }
+
   private async runCommand(command: Command, i: Interaction): Promise<void> {
-    if (typeof command.run !== "undefined") {
-      try {
-        await command.run(i);
-        this.logger.info(
-          `Runned command ${command.commandPartial.name}.`,
-          `userId=${i.user?.id}`,
-          `guildId=${i.guild?.id}`,
-          `channelId=${i.channel?.id}`,
-          `interactionId=${i.id}`,
-        );
-      } catch (err) {
-        if (err instanceof CommandError) {
-          this.logger.error(
-            `Failed to run command ${command.commandPartial.name}.`,
-            `userId=${i.user?.id}`,
-            `guildId=${i.guild?.id}`,
-            `channelId=${i.channel?.id}`,
-            `interactionId=${i.id}`,
-            err,
-          );
-        } else {
-          this.logger.error(
-            `Failed to run command ${command.commandPartial.name}.`,
-            `userId=${i.user?.id}`,
-            `guildId=${i.guild?.id}`,
-            `channelId=${i.channel?.id}`,
-            `interactionId=${i.id}`,
-            err,
-          );
-        }
-      }
-    } else {
+    if (typeof command.run === "undefined") {
       i.respond({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         content: "Sorry. This command cannot use now.",
       }).then(() => {
-        this.logger.error(
-          "The command run method is undefined.",
-          `userId=${i.user?.id}`,
-          `guildId=${i.guild?.id}`,
-          `channelId=${i.channel?.id}`,
-          `interactionId=${i.id}`,
-          `hash=undefined`,
+        this.logCommandError(
+          i,
+          `Command ${command.commandPartial.name} run method is undefined.`,
         );
       });
+    }
+
+    try {
+      await command.run(i);
+      this.logger.info(
+        `Runned command ${command.commandPartial.name}.`,
+        `userId=${i.user?.id}`,
+        `guildId=${i.guild?.id}`,
+        `channelId=${i.channel?.id}`,
+        `interactionId=${i.id}`,
+      );
+    } catch (err) {
+      if (err instanceof CommandError) {
+        this.logCommandError(
+          i,
+          `Failed to run command ${command.commandPartial.name}.`,
+          err,
+        );
+      } else {
+        this.logCommandError(
+          i,
+          `Failed to run command ${command.commandPartial.name}.`,
+          err,
+        );
+      }
     }
   }
 
