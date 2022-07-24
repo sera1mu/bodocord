@@ -197,6 +197,25 @@ describe("BCDiceAPIClient", () => {
       );
     });
 
+    it("incorrectGameSystemResponse", async () => {
+      setIncorrectResponseMode();
+      returnOptions.responseObject = {
+        game_system: [
+          {
+            id: 0,
+            name: false,
+            sort_key: [],
+          },
+        ],
+      };
+
+      await assertRejects(
+        async () => await bcdiceAPIClient.getAvailableGameSystems(),
+        BCDiceError,
+        "The game system is incorrect.",
+      );
+    });
+
     it("success", async () => {
       setOkResponseMode();
       returnOptions.responseObject = {
@@ -253,6 +272,24 @@ describe("BCDiceAPIClient", () => {
         async () => await bcdiceAPIClient.getGameSystem("hogehoge"),
         BCDiceError,
         "The specified game system is unsupported.",
+      );
+    });
+
+    it("incorrectGameSystemResponse", async () => {
+      setIncorrectResponseMode();
+      returnOptions.responseObject = {
+        ok: true,
+        id: 999,
+        name: false,
+        sort_key: [],
+        command_pattern: -5,
+        help_message: 39,
+      };
+
+      await assertRejects(
+        async () => await bcdiceAPIClient.getGameSystem("DiceBot"),
+        BCDiceError,
+        "The response is incorrect.",
       );
     });
 
