@@ -18,10 +18,13 @@ import {
 import SimpleKyClient from "./SimpleKyClient.ts";
 
 export default class BCDiceAPIClient {
+  readonly prefixUrl: string | URL;
+
   private readonly webClient: SimpleKyClient;
 
   constructor(webClient: SimpleKyClient) {
     this.webClient = webClient;
+    this.prefixUrl = webClient.prefixUrl;
   }
 
   async getAPIVersion(): Promise<APIVersion> {
