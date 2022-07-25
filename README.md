@@ -1,7 +1,8 @@
 # Bodocord
 
-![GitHub Workflow Status: Test](https://img.shields.io/github/workflow/status/sera1mu/bodocord/Test?label=Test&logo=github&style=flat-square)
-![Codecov coverage](https://img.shields.io/codecov/c/github/sera1mu/bodocord/main?label=coverage&logo=codecov&style=flat-square)
+[![GitHub Workflow Status: Test](https://img.shields.io/github/workflow/status/sera1mu/bodocord/Test?label=Test&logo=github&style=flat-square)](https://github.com/sera1mu/bodocord/actions/workflows/test.yml)
+[![Codecov coverage](https://img.shields.io/codecov/c/github/sera1mu/bodocord/main?label=coverage&logo=codecov&style=flat-square)](https://app.codecov.io/gh/sera1mu/bodocord)
+[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/sera1mu/bodocord?style=flat-square)](https://codeclimate.com/github/sera1mu/bodocord)
 
 **This is WIP project. We don't recommend use in production.**
 
