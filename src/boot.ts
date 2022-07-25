@@ -1,126 +1,135 @@
-import pino from "pino";
 import { Intents } from "harmony";
+import * as log from "std/log";
 import BodocordClient from "./discord/BodocordClient.ts";
 import { Config, getConfig } from "./util/configUtil.ts";
 import BCDiceAPIClient from "./bcdice/BCDiceAPIClient.ts";
+import SimpleKyClient from "./bcdice/SimpleKyClient.ts";
+
+let isAlreadyStartedShutdown = false;
 
 /**
- * Bodocord necessary environment variables
- *
- * BC_CONFIG -> Config file path
- *
- * BC_TOKEN -> Client token
+ * Bodocordが使用する環境変数
  */
 interface EnvironmentVariables {
+  /**
+   * 設定ファイルのパス
+   */
   BC_CONFIG: string;
+
+  /**
+   * 使用するBotのトークン
+   */
   BC_TOKEN: string;
 }
 
 /**
- * Get the necessary environment variables
+ * 必要な環境変数を取得する
  *
- * Requires `allow-env` for `BC_CONFIG` and `BC_TOKEN`
+ * Requires `allow-env`
  */
-const getEnv =
-  function getNecessaryEnvironmentVariables(): EnvironmentVariables {
-    // Get BC_CONFIG
-    const BC_CONFIG = Deno.env.get("BC_CONFIG");
-    // When BC_CONFIG is not string (undefined)
-    if (typeof BC_CONFIG !== "string") {
-      // Throw error
-      throw new Error(
-        'Specify the config file path to environment variable "BC_CONFIG".',
-      );
-    }
+function getEnv(): EnvironmentVariables {
+  const BC_CONFIG = Deno.env.get("BC_CONFIG");
+  if (typeof BC_CONFIG !== "string") {
+    throw new Error(
+      'Specify the config file path to environment variable "BC_CONFIG".',
+    );
+  }
 
-    // Get BC_TOKEN
-    const BC_TOKEN = Deno.env.get("BC_TOKEN");
-    if (typeof BC_TOKEN !== "string") {
-      throw new Error(
-        'Specify the client\'s token to environment variable "BC_TOKEN".',
-      );
-    }
+  const BC_TOKEN = Deno.env.get("BC_TOKEN");
+  if (typeof BC_TOKEN !== "string") {
+    throw new Error(
+      'Specify the client\'s token to environment variable "BC_TOKEN".',
+    );
+  }
 
-    return {
-      BC_CONFIG,
-      BC_TOKEN,
-    };
+  return {
+    BC_CONFIG,
+    BC_TOKEN,
   };
+}
 
 /**
- * Shutdown bot gracefully
- * @param client Bot client
- * @param systemLogger
+ * 正常にBotをシャットダウン
  */
-const shutdown = function gracefullyShutdownBot(
+function shutdown(
   client: BodocordClient,
-  systemLogger: pino.Logger,
+  logger: log.Logger,
 ): void {
-  systemLogger.info("Shutting down...");
+  if (isAlreadyStartedShutdown) return;
+  isAlreadyStartedShutdown = true;
 
-  // Destroy client
+  logger.info("Shutting down...");
+
   client.destroy()
-    .then(() => systemLogger.info("Destroyed client."))
+    .then(() => {
+      logger.info("Destroyed client.");
+      logger.info("Exit code is 0.");
+    })
     .catch((err) => {
-      systemLogger.error(err, "Failed to destroy client gracefully.");
-      systemLogger.info("Exit code is 1.");
+      logger.error("Failed to destroy client gracefully.", `err=${err}`);
+      logger.info("Exit code is 1.");
       Deno.exit(1);
     });
-
-  systemLogger.info("Exit code is 0.");
-};
+}
 
 /**
- * Boot the bot
- * @returns System logger
+ * Botを起動する
  */
-const boot = async function bootBot(): Promise<
-  { client: BodocordClient; config: Config; logger: pino.Logger }
+async function boot(): Promise<
+  { client: BodocordClient; config: Config; logger: log.Logger }
 > {
-  // Get env
   const { BC_CONFIG, BC_TOKEN } = getEnv();
-
-  // Get config
   const config = getConfig(BC_CONFIG);
 
-  // Create logger
-  const logger = pino(config.loggers["system"]);
+  await log.setup({
+    handlers: {
+      console: new log.handlers.ConsoleHandler("INFO", {
+        formatter: (logRecord) => {
+          const datetime = `${logRecord.datetime.getFullYear()}/${
+            logRecord.datetime.getMonth().toString().padStart(2, "0")
+          }/${logRecord.datetime.getDate().toString().padStart(2, "0")} ${
+            logRecord.datetime.getHours().toString().padStart(2, "0")
+          }:${logRecord.datetime.getMinutes().toString().padStart(2, "0")}:${
+            logRecord.datetime.getSeconds().toString().padStart(2, "0")
+          }`;
+          const output =
+            `[${datetime}] [${logRecord.loggerName}/${logRecord.levelName}]${
+              logRecord.args.length !== 0 ? " " + logRecord.args.join(",") : ""
+            }: ${logRecord.msg}`;
 
-  // Create BCDice client
-  const bcdiceClient = new BCDiceAPIClient(config.bcdiceAPIServer);
+          return output;
+        },
+      }),
+    },
+    loggers: {
+      default: {
+        level: "INFO",
+        handlers: ["console"],
+      },
+      client: {
+        level: "INFO",
+        handlers: ["console"],
+      },
+    },
+  });
 
-  // Create client
-  const client = new BodocordClient(bcdiceClient, config.loggers["client"]);
-
-  // Connect gateway
+  const logger = log.getLogger();
+  const bcdiceClient = new BCDiceAPIClient(
+    new SimpleKyClient(config.bcdiceAPIServer),
+  );
+  const client = new BodocordClient(bcdiceClient, log.getLogger("client"));
   await client.connect(BC_TOKEN, Intents.None);
 
-  // Add signal listeners (UNSTABLE)
-  Deno.addSignalListener("SIGTERM", () => {
-    shutdown(client, logger);
-  });
-  Deno.addSignalListener("SIGINT", () => {
-    shutdown(client, logger);
-  });
+  Deno.addSignalListener("SIGTERM", () => shutdown(client, logger));
+  Deno.addSignalListener("SIGINT", () => shutdown(client, logger));
 
   return { client, config, logger };
-};
+}
 
-// Measure boot time
-performance.mark("bootStart");
-const { logger } = await boot();
-performance.mark("bootEnd");
-
-performance.measure(
-  "boot",
-  "bootStart",
-  "bootEnd",
-);
-
-// Get boot time result
-const bootTimeResult = performance.getEntriesByName("boot")[0];
-const divisionMiliSeconds = 1000;
-
-// Log completed
-logger.info(`Done(${bootTimeResult.duration / divisionMiliSeconds} s)!`);
-logger.debug(bootTimeResult, "Boot measure result");
+const startTime = performance.now();
+const { client, logger } = await boot();
+client.registerCommandPromise?.finally(() => {
+  const endTime = performance.now();
+  const divisionMiliseconds = 1000;
+  logger.info(`Done(${(endTime - startTime) / divisionMiliseconds} s)!`);
+});

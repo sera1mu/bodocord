@@ -2,28 +2,22 @@ import { ApplicationCommandPartial, Interaction } from "harmony";
 import BodocordClient from "../discord/BodocordClient.ts";
 
 /**
- * Base of Slash command
+ * Slash Commandの基底クラス
  */
-export default class Command {
-  /**
-   * Partial of slash command
-   */
+export default abstract class Command {
   readonly commandPartial: ApplicationCommandPartial;
 
-  /**
-   * @param commandPartial Partial of slash command
-   */
   constructor(commandPartial: ApplicationCommandPartial) {
     this.commandPartial = commandPartial;
   }
 
   /**
-   * Client runs when command initializing
+   * クライアントがコマンドを初期化したときの処理
    */
-  init?(client: BodocordClient): void | Promise<void>;
+  abstract init(client: BodocordClient): void | Promise<void>;
 
   /**
-   * Command action
+   * コマンドが実行されたときの処理
    */
-  run?(i: Interaction): void | Promise<void>;
+  abstract run(i: Interaction): void | Promise<void>;
 }

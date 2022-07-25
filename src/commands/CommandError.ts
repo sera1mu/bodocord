@@ -1,14 +1,16 @@
 export default class CommandError extends Error {
   /**
-   * Hash to identify the error from log (MD5)
+   * エラーハッシュ (MD5)
+   *
+   * エラーを簡単にログから検索するために使用されます。
    */
   readonly hash: string;
 
   /**
-   * @param hash Error hash (MD5)
+   * @param hash エラーハッシュ (MD5)
    */
-  constructor(hash: string, message?: string, init?: ErrorInit) {
-    super(message, init);
+  constructor(hash: string, message?: string, options?: ErrorOptions) {
+    super(message, options);
 
     this.hash = hash;
   }

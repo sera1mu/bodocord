@@ -1,24 +1,22 @@
 import { Embed } from "harmony";
 
 /**
- * Message Embed Object to display error information
+ * エラー情報を表示するためのDiscordのEmbed
  */
 export default class ErrorEmbed extends Embed {
-  /**
-   * Error message
-   *
-   * It will be substituted into the description of Embed.
-   */
   readonly message: string;
 
   /**
-   * Hash value of the error
+   * ハッシュ(MD5)
+   *
+   * エラーをログから簡単に見つけるための目印として使う
+   *
+   * util/hashUtil.ts にある 関数 `generateHash` を使って生成してください。
    */
   readonly hash: string;
 
   /**
-   * @param message Error message
-   * @param hash Error Hash (MD5)
+   * @param hash エラーハッシュ(MD5)
    */
   constructor(message: string, hash: string) {
     super({

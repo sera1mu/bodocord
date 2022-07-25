@@ -1,12 +1,12 @@
 /**
  * BCDice Error code
  *
- * * `UNSUPPORTED_COMMAND` -> You are using an unsupported command. Review the syntax.
- * * `UNSUPPORTED_SYSTEM`  -> You are using an unsupported game system. Review the syntax.
- * * `UNSUPPORTED_TABLE`   -> You are using an unsupported original table. Review the syntax.
- * * `CONNECTION_ERROR`    -> Communication with the API has failed for some reason. Identify the cause from the error information.
- * * `INCORRECT_RESPONSE`  -> The response was incorrect. Check your connection.
- * * `UNKNOWN`             -> An unknown error has occurred. Identify the cause from the error information.
+ * * `UNSUPPORTED_COMMAND` -> 正しくないコマンドです。構文を見直してください。
+ * * `UNSUPPORTED_SYSTEM`  -> 存在しないゲームシステムです。ゲームシステム名が正しいか確認してください。
+ * * `UNSUPPORTED_TABLE`   -> 正しくないテーブルです。構文を見直してください。
+ * * `CONNECTION_ERROR`    -> 何らかの原因によってAPIとの通信に失敗しました。プロパティ `cause` から詳細なエラーを確認してください。
+ * * `INCORRECT_RESPONSE`  -> レスポンスが正しくありません。APIが正常に動作しているか確認してください。
+ * * `UNKNOWN`             -> 未確認のエラーです。プロパティ `cause` から詳細なエラーを確認してください。
  */
 export type BCDiceErrorCode =
   | "UNSUPPORTED_COMMAND"
@@ -22,15 +22,12 @@ export interface BCDiceErrorInit {
 
 export default class BCDiceError extends Error {
   /**
-   * Error type
+   * エラーコード
    *
-   * See `BCDiceErrorCode` comment to know what the code mean.
+   * `BCDiceErrorCode` のコメントにそれぞれのコメントが何を意味するか書かれています。
    */
   readonly code: BCDiceErrorCode;
 
-  /**
-   * @param code Error code
-   */
   constructor(
     code: BCDiceErrorCode,
     message?: string,

@@ -1,36 +1,20 @@
-import { DestinationStream, LoggerOptions } from "pino";
-
-/**
- * Logger name
- */
-export type Logger = "system" | "client";
-
-/**
- * Configuration file
- */
 export interface Config {
   /**
-   * Logger settings
-   */
-  loggers: {
-    [key in Logger]: LoggerOptions | DestinationStream | undefined;
-  };
-  /**
-   * Hostname of BCDice API server
+   * BCDice API サーバーのホスト名
    */
   bcdiceAPIServer: string;
 }
 
 /**
- * Read and parse config from JSON file
+ * 設定ファイルを取得
  *
- * Requires `allow-read` for config file
+ * Requires `allow-read`
  */
-export const getConfig = function getConfigFromJSONFile(
+export function getConfig(
   path: string,
 ): Config {
   const rawConfig = Deno.readTextFileSync(path);
   const parsedConfig = JSON.parse(rawConfig);
 
   return parsedConfig;
-};
+}

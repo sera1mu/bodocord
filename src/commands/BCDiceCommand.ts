@@ -15,9 +15,6 @@ import BCDiceError from "../bcdice/BCDiceError.ts";
 import ErrorEmbed from "../discord/embeds/ErrorEmbed.ts";
 
 export default class BCDiceCommand extends Command {
-  /**
-   * BCDice-API Client
-   */
   private readonly bcdice: BCDiceAPIClient;
 
   constructor(bcdice: BCDiceAPIClient) {
@@ -274,6 +271,8 @@ export default class BCDiceCommand extends Command {
       content: `:game_die: ${results.text}`,
     });
   }
+
+  init(): void {}
 
   async run(i: Interaction): Promise<void> {
     const slashInteraction = i as SlashCommandInteraction;
